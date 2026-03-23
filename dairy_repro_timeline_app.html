@@ -205,7 +205,7 @@
 <body>
 
 <header>
-  <h1>Dairy Reproductive Timeline</h1>
+  <h1>Dairy Lactation Timeline Visualiser</h1>
   <p>Adjust parameters to explore calving interval components</p>
 </header>
 
@@ -383,12 +383,12 @@
           ctx.setLineDash([4, 3]);
           ctx.stroke();
           ctx.setLineDash([]);
-          // Label above the line
+          // Label left of the line, right-aligned
           ctx.font = "600 10px 'Geist', system-ui, sans-serif";
           ctx.fillStyle = '#1a1612';
-          ctx.textAlign = 'center';
+          ctx.textAlign = 'right';
           ctx.textBaseline = 'bottom';
-          ctx.fillText(`Calving interval: ${ci} d`, x, chartArea.top - 2);
+          ctx.fillText(`Calving interval: ${ci} d`, x - 5, chartArea.top - 2);
           ctx.restore();
         }
       }
@@ -446,7 +446,7 @@
         return null;
       },
     };
-    chart.options.scales.x.max = gestEnd;
+    chart.options.scales.x.max = gestEnd + Math.ceil(gestEnd * 0.04);
 
     chart.update(firstRender ? 'active' : 'none');
     firstRender = false;
