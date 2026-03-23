@@ -36,7 +36,7 @@ These apps are hosted via [GitHub Pages](https://pages.github.com/) and can be e
 
 ```html
 <iframe
-  src="https://YOUR-USERNAME.github.io/dairy-teaching-apps/dairy_repro_timeline_app.html"
+  src="https://davos-i.github.io/dairy-teaching-apps/dairy_repro_timeline_app.html"
   width="100%"
   height="580"
   style="border:none;"
