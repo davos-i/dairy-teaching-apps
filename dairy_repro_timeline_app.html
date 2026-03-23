@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dairy Reproductive Timeline</title>
+<title>Dairy Lactation Timeline Visualiser</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap');
@@ -161,7 +161,7 @@
 
   .stats {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 0.4rem;
     margin-top: 0.2rem;
   }
@@ -243,6 +243,11 @@
 
     <div class="stats">
       <div class="stat">
+        <span class="stat-label">Calving Interval</span>
+        <span class="stat-value" id="stat-ci">—</span>
+        <span class="stat-unit">days</span>
+      </div>
+      <div class="stat">
         <span class="stat-label">Lactation</span>
         <span class="stat-value" id="stat-lact">—</span>
         <span class="stat-unit">days</span>
@@ -309,7 +314,7 @@
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
-      layout: { padding: { right: 50 } },
+      layout: { padding: { right: 50, top: 18 } },
       plugins: {
         legend: { display: false },
         tooltip: {
@@ -353,14 +358,37 @@
             const [s, e] = data.datasets[0].data[i];
             const dur = e - s;
             const label = `${dur} d`;
-            // bar.x is the right edge of the bar for horizontal bars
             const x = bar.x + 6;
             const y = bar.y;
-            // shadow for legibility
-            ctx.fillStyle = 'rgba(250,248,244,0.0)';
             ctx.fillStyle = '#6b5f52';
             ctx.fillText(label, x, y);
           });
+          ctx.restore();
+        }
+      },
+      // Draw vertical line at calving interval
+      {
+        id: 'calvingLine',
+        afterDraw(chart) {
+          const ci = chart._calvingInterval;
+          if (!ci) return;
+          const { ctx, chartArea, scales } = chart;
+          const x = scales.x.getPixelForValue(ci);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(x, chartArea.top);
+          ctx.lineTo(x, chartArea.bottom);
+          ctx.strokeStyle = '#1a1612';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 3]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          // Label above the line
+          ctx.font = "600 10px 'Geist', system-ui, sans-serif";
+          ctx.fillStyle = '#1a1612';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'bottom';
+          ctx.fillText(`Calving interval: ${ci} d`, x, chartArea.top - 2);
           ctx.restore();
         }
       }
@@ -386,6 +414,7 @@
     document.getElementById('open-val').textContent = `${open} d`;
 
     // Stats
+    document.getElementById('stat-ci').textContent    = gestEnd;
     document.getElementById('stat-lact').textContent  = lactLen;
     document.getElementById('stat-breed').textContent = Math.max(0, breedLen);
     document.getElementById('stat-start').textContent = breedStart;
@@ -402,14 +431,22 @@
 
     chart.data.datasets[0].data = barData;
 
-    // Dynamic x-axis ticks
-    const tickSet = new Set([0, VWP, open, lactLen, gestEnd]);
+    // Store gestEnd for the vertical line plugin
+    chart._calvingInterval = gestEnd;
+
+    // Fixed 50d grid, always label key DIM values including calving interval
+    const keyVals = new Set([0, VWP, open, lactLen, gestEnd]);
     chart.options.scales.x.ticks = {
       font: { family: "'Geist Mono', monospace", size: 10 },
       color: '#6b5f52',
-      callback: val => tickSet.has(val) ? val : null,
+      stepSize: 50,
+      callback: function(val) {
+        if (keyVals.has(val)) return val;
+        if (val % 50 === 0) return val;
+        return null;
+      },
     };
-    chart.options.scales.x.max = gestEnd + 5;
+    chart.options.scales.x.max = gestEnd;
 
     chart.update(firstRender ? 'active' : 'none');
     firstRender = false;
