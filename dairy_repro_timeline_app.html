@@ -16,20 +16,18 @@
     --ink: #1a1612;
     --muted: #6b5f52;
     --rule: #d4c9b8;
-
-    --col-lactation:   #4a7c59;
-    --col-dry:         #c4884a;
-    --col-breeding:    #c45a3a;
-    --col-vwp:         #7a9bbf;
-    --col-gestation:   #8b6baa;
-    --col-open:        #b5a642;
+    --col-lactation: #4a7c59;
+    --col-dry:       #c4884a;
+    --col-breeding:  #c45a3a;
+    --col-vwp:       #7a9bbf;
+    --col-gestation: #8b6baa;
+    --col-open:      #b5a642;
   }
 
   html, body {
     font-family: 'Geist', system-ui, sans-serif;
     background: var(--warm-white);
     color: var(--ink);
-    height: auto;
     padding: 1rem 1.2rem 0.5rem;
     max-width: 1100px;
     margin: 0 auto;
@@ -52,7 +50,6 @@
     font-size: 0.83rem;
     color: var(--muted);
     margin-top: 0.3rem;
-    font-weight: 400;
   }
 
   .layout {
@@ -64,27 +61,26 @@
 
   @media (max-width: 700px) {
     .layout { grid-template-columns: 1fr; }
-    .stats { grid-template-columns: 1fr 1fr; }
+    .stats  { grid-template-columns: 1fr 1fr !important; }
   }
 
-  /* Controls */
   .controls {
     background: var(--cream);
     border: 1px solid var(--rule);
-    padding: 1rem 1rem 1.2rem;
+    padding: 1rem;
   }
 
   .controls h2 {
+    font-family: 'Geist Mono', monospace;
     font-size: 0.68rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 0.9rem;
-    font-family: 'Geist Mono', monospace;
   }
 
   .slider-group {
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.85rem;
   }
 
   .slider-group label {
@@ -93,15 +89,20 @@
     align-items: baseline;
     font-size: 0.88rem;
     margin-bottom: 0.35rem;
-    font-weight: 400;
   }
 
-  .slider-group label span.val {
-    font-family: 'DM Mono', monospace;
+  .slider-group label .val {
+    font-family: 'Geist Mono', monospace;
     font-size: 0.82rem;
     color: var(--muted);
-    min-width: 3em;
+    min-width: 3.5em;
     text-align: right;
+  }
+
+  .slider-hint {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
   }
 
   input[type=range] {
@@ -130,8 +131,31 @@
     cursor: pointer;
   }
 
+  .chart-area {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 0;
+  }
 
-  /* Stats */
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0.4rem;
+  }
+
+  .stat {
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    padding: 0.45rem 0.6rem;
+  }
+
+  .stat-label {
     font-family: 'Geist Mono', monospace;
     font-size: 0.62rem;
     text-transform: uppercase;
@@ -142,45 +166,17 @@
   }
 
   .stat-value {
+    font-family: 'Geist Mono', monospace;
     font-size: 1.3rem;
     font-weight: 600;
     letter-spacing: -0.03em;
-    font-family: 'Geist Mono', monospace;
   }
 
   .stat-unit {
     font-size: 0.7rem;
     color: var(--muted);
-    font-weight: 400;
-    font-family: 'Geist', sans-serif;
   }
 
-  .chart-area {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    min-width: 0;
-  }
-
-  .stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 0.4rem;
-    margin-top: 0.2rem;
-  }
-
-  .stat {
-    background: var(--cream);
-    border: 1px solid var(--rule);
-    padding: 0.45rem 0.6rem;
-  }
-
-  .chart-wrap {
-    position: relative;
-    width: 100%;
-  }
-
-  /* Legend */
   .legend {
     display: flex;
     flex-wrap: wrap;
@@ -202,6 +198,7 @@
     border-radius: 2px;
     flex-shrink: 0;
   }
+
   .footer {
     border-top: 1px solid var(--rule);
     margin-top: 0.8rem;
@@ -211,6 +208,7 @@
     display: flex;
     gap: 0.4rem;
     align-items: center;
+    flex-wrap: wrap;
   }
 
   .footer a {
@@ -218,9 +216,7 @@
     text-decoration: none;
   }
 
-  .footer a:hover {
-    text-decoration: underline;
-  }
+  .footer a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -231,7 +227,7 @@
 </header>
 
 <div class="layout">
-  <!-- Controls -->
+
   <aside class="controls">
     <h2>Parameters</h2>
 
@@ -247,16 +243,17 @@
 
     <div class="slider-group">
       <label>Gestation Length <span class="val" id="gest-val">280 d</span></label>
-      <input type="range" id="gest" min="260" max="295" value="280" step="1">
+      <input type="range" id="gest" min="265" max="295" value="280" step="1">
+      <div class="slider-hint">Holstein &approx; 279 d &middot; Jersey &approx; 283 d</div>
     </div>
 
     <div class="slider-group">
-      <label>Days Open (calving to conception) <span class="val" id="open-val">85 d</span></label>
+      <label>Days Open <span class="val" id="open-val">85 d</span></label>
       <input type="range" id="open" min="60" max="200" value="85" step="1">
+      <div class="slider-hint">Calving to conception</div>
     </div>
   </aside>
 
-  <!-- Chart + stats -->
   <div class="chart-area">
     <div class="chart-wrap">
       <canvas id="chart"></canvas>
@@ -265,22 +262,22 @@
     <div class="stats">
       <div class="stat">
         <span class="stat-label">Calving Interval</span>
-        <span class="stat-value" id="stat-ci">—</span>
+        <span class="stat-value" id="stat-ci">&#8212;</span>
         <span class="stat-unit">days</span>
       </div>
       <div class="stat">
         <span class="stat-label">Lactation</span>
-        <span class="stat-value" id="stat-lact">—</span>
+        <span class="stat-value" id="stat-lact">&#8212;</span>
         <span class="stat-unit">days</span>
       </div>
       <div class="stat">
         <span class="stat-label">Breeding Period</span>
-        <span class="stat-value" id="stat-breed">—</span>
+        <span class="stat-value" id="stat-breed">&#8212;</span>
         <span class="stat-unit">days</span>
       </div>
       <div class="stat">
-        <span class="stat-label">Start breeding by</span>
-        <span class="stat-value" id="stat-start">—</span>
+        <span class="stat-label">Start Breeding By</span>
+        <span class="stat-value" id="stat-start">&#8212;</span>
         <span class="stat-unit">DIM</span>
       </div>
     </div>
@@ -294,15 +291,27 @@
       <div class="legend-item"><div class="legend-dot" style="background:var(--col-open)"></div>Days open</div>
     </div>
   </div>
+
 </div>
 
 <footer class="footer">
-  Dave Innes · <a href="mailto:david.innes@une.edu.au">david.innes@une.edu.au</a> · March 2026
+  Dave Innes &middot; <a id="footer-email" href="#">&#8212;</a> &middot; March 2026
 </footer>
 
 <script>
-  // ── Chart setup ──────────────────────────────────────────────────────────
-  const LABELS = [
+  // Email set via JS to avoid proxy obfuscation
+  (function() {
+    var a = document.getElementById('footer-email');
+    var e = 'david.innes' + '\u0040' + 'une.edu.au';
+    a.href = 'mailto:' + e;
+    a.textContent = e;
+  })();
+
+  function cssVar(n) {
+    return getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  }
+
+  var LABELS = [
     'Voluntary waiting period',
     'Breeding period',
     'Days open (calving-to-conception)',
@@ -311,24 +320,22 @@
     'Lactation',
   ];
 
-  const COLORS = [
-    getComputedStyle(document.documentElement).getPropertyValue('--col-vwp').trim(),
-    getComputedStyle(document.documentElement).getPropertyValue('--col-breeding').trim(),
-    getComputedStyle(document.documentElement).getPropertyValue('--col-open').trim(),
-    getComputedStyle(document.documentElement).getPropertyValue('--col-gestation').trim(),
-    getComputedStyle(document.documentElement).getPropertyValue('--col-dry').trim(),
-    getComputedStyle(document.documentElement).getPropertyValue('--col-lactation').trim(),
+  var COLORS = [
+    cssVar('--col-vwp'),
+    cssVar('--col-breeding'),
+    cssVar('--col-open'),
+    cssVar('--col-gestation'),
+    cssVar('--col-dry'),
+    cssVar('--col-lactation'),
   ];
 
-  const ctx = document.getElementById('chart').getContext('2d');
-
-  // Floating bar dataset: each point is [start, end]
-  const chart = new Chart(ctx, {
+  var canvas = document.getElementById('chart');
+  var chart = new Chart(canvas.getContext('2d'), {
     type: 'bar',
     data: {
       labels: LABELS,
       datasets: [{
-        data: [[0,1],[0,1],[0,1],[0,1],[0,1],[0,1]],   // distinct refs, replaced immediately
+        data: [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]],
         backgroundColor: COLORS,
         borderRadius: 2,
         borderSkipped: false,
@@ -340,20 +347,18 @@
       responsive: true,
       maintainAspectRatio: true,
       aspectRatio: 1.8,
-      layout: { padding: { right: 50, top: 18 } },
+      layout: { padding: { right: 50, top: 20 } },
       plugins: {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: ctx => {
-              const [s, e] = ctx.raw;
-              return `  ${s} → ${e} d  (${e - s} d)`;
+            label: function(ctx) {
+              var d = ctx.raw;
+              return '  ' + d[0] + ' \u2192 ' + d[1] + ' d  (' + (d[1] - d[0]) + ' d)';
             },
-            title: ctx => ctx[0].label,
+            title: function(ctx) { return ctx[0].label; }
           }
-        },
-        // Inline labels via a custom plugin
-        datalabels: null,
+        }
       },
       scales: {
         x: {
@@ -370,107 +375,91 @@
       }
     },
     plugins: [
-      // Draw duration labels to the right of each bar
       {
         id: 'barLabels',
-        afterDatasetsDraw(chart) {
-          const { ctx, data } = chart;
-          ctx.save();
-          ctx.font = "500 11px 'Geist Mono', monospace";
-          ctx.textAlign = 'left';
-          ctx.textBaseline = 'middle';
-
-          chart.getDatasetMeta(0).data.forEach((bar, i) => {
-            const [s, e] = data.datasets[0].data[i];
-            const dur = e - s;
-            const label = `${dur} d`;
-            const x = bar.x + 6;
-            const y = bar.y;
-            ctx.fillStyle = '#6b5f52';
-            ctx.fillText(label, x, y);
+        afterDatasetsDraw: function(ch) {
+          var c = ch.ctx;
+          c.save();
+          c.font = "500 11px 'Geist Mono', monospace";
+          c.textAlign = 'left';
+          c.textBaseline = 'middle';
+          c.fillStyle = '#6b5f52';
+          ch.getDatasetMeta(0).data.forEach(function(bar, i) {
+            var d = ch.data.datasets[0].data[i];
+            c.fillText((d[1] - d[0]) + ' d', bar.x + 6, bar.y);
           });
-          ctx.restore();
+          c.restore();
         }
       },
-      // Draw vertical line at calving interval
       {
         id: 'calvingLine',
-        afterDraw(chart) {
-          const ci = chart._calvingInterval;
+        afterDraw: function(ch) {
+          var ci = ch._ci;
           if (!ci) return;
-          const { ctx, chartArea, scales } = chart;
-          const x = scales.x.getPixelForValue(ci);
-          ctx.save();
-          ctx.beginPath();
-          ctx.moveTo(x, chartArea.top);
-          ctx.lineTo(x, chartArea.bottom);
-          ctx.strokeStyle = '#1a1612';
-          ctx.lineWidth = 2;
-          ctx.setLineDash([4, 3]);
-          ctx.stroke();
-          ctx.setLineDash([]);
-          // Label left of the line, right-aligned
-          ctx.font = "600 10px 'Geist', system-ui, sans-serif";
-          ctx.fillStyle = '#1a1612';
-          ctx.textAlign = 'right';
-          ctx.textBaseline = 'bottom';
-          ctx.fillText(`Calving interval: ${ci} d`, x - 5, chartArea.top - 2);
-          ctx.restore();
+          var c = ch.ctx, area = ch.chartArea, x = ch.scales.x.getPixelForValue(ci);
+          c.save();
+          c.beginPath();
+          c.moveTo(x, area.top);
+          c.lineTo(x, area.bottom);
+          c.strokeStyle = '#1a1612';
+          c.lineWidth = 2;
+          c.setLineDash([4, 3]);
+          c.stroke();
+          c.setLineDash([]);
+          c.font = "600 10px 'Geist', system-ui, sans-serif";
+          c.fillStyle = '#1a1612';
+          c.textAlign = 'right';
+          c.textBaseline = 'bottom';
+          c.fillText('Calving interval: ' + ci + ' d', x - 5, area.top - 2);
+          c.restore();
         }
       }
     ]
   });
 
-  // ── Compute & render ─────────────────────────────────────────────────────
+  var firstRender = true;
+
   function compute() {
-    const VWP   = +document.getElementById('vwp').value;
-    const dry   = +document.getElementById('dry').value;
-    const gest  = +document.getElementById('gest').value;
-    const open  = +document.getElementById('open').value;   // calving_to_conception_DIM
+    var VWP  = +document.getElementById('vwp').value;
+    var dry  = +document.getElementById('dry').value;
+    var gest = +document.getElementById('gest').value;
+    var open = +document.getElementById('open').value;
 
-    const breedStart   = VWP;                     // same as breeding_period_start_DIM
-    const breedLen     = open - VWP;
-    const gestEnd      = open + gest;             // total days in reproductive cycle
-    const lactLen      = gestEnd - dry;
+    var breedLen = open - VWP;
+    var gestEnd  = open + gest;
+    var lactLen  = gestEnd - dry;
 
-    // Update sliders display
-    document.getElementById('vwp-val').textContent  = `${VWP} d`;
-    document.getElementById('dry-val').textContent  = `${dry} d`;
-    document.getElementById('gest-val').textContent = `${gest} d`;
-    document.getElementById('open-val').textContent = `${open} d`;
+    document.getElementById('vwp-val').textContent  = VWP  + ' d';
+    document.getElementById('dry-val').textContent  = dry  + ' d';
+    document.getElementById('gest-val').textContent = gest + ' d';
+    document.getElementById('open-val').textContent = open + ' d';
 
-    // Stats
     document.getElementById('stat-ci').textContent    = gestEnd;
     document.getElementById('stat-lact').textContent  = lactLen;
     document.getElementById('stat-breed').textContent = Math.max(0, breedLen);
-    document.getElementById('stat-start').textContent = breedStart;
+    document.getElementById('stat-start').textContent = VWP;
 
-    // Floating bar data: [start, end] for each row (same order as LABELS)
-    const barData = [
-      [0, VWP],            // VWP
-      [breedStart, open],  // Breeding period
-      [0, open],           // Days open
-      [open, gestEnd],     // Gestation
-      [lactLen, gestEnd],  // Dry period
-      [0, lactLen],        // Lactation
+    chart.data.datasets[0].data = [
+      [0, VWP],
+      [VWP, open],
+      [0, open],
+      [open, gestEnd],
+      [lactLen, gestEnd],
+      [0, lactLen],
     ];
 
-    chart.data.datasets[0].data = barData;
+    chart._ci = gestEnd;
 
-    // Store gestEnd for the vertical line plugin
-    chart._calvingInterval = gestEnd;
-
-    // Fixed 50d grid, always label key DIM values including calving interval
-    const keyVals = new Set([0, VWP, open, lactLen, gestEnd]);
+    var keyVals = [0, VWP, open, lactLen, gestEnd];
     chart.options.scales.x.ticks = {
       font: { family: "'Geist Mono', monospace", size: 10 },
       color: '#6b5f52',
       stepSize: 50,
       callback: function(val) {
-        if (keyVals.has(val)) return val;
+        if (keyVals.indexOf(val) !== -1) return val;
         if (val % 50 === 0) return val;
         return null;
-      },
+      }
     };
     chart.options.scales.x.max = gestEnd + Math.ceil(gestEnd * 0.04);
 
@@ -478,35 +467,21 @@
     firstRender = false;
   }
 
-  let firstRender = true;
-
-  // Wire sliders
-  ['vwp','dry','gest','open'].forEach(id => {
+  ['vwp', 'dry', 'gest', 'open'].forEach(function(id) {
     document.getElementById(id).addEventListener('input', compute);
   });
 
-  // Resize chart when window size changes — reset canvas first so it can grow back
-  let resizeTimer;
-  window.addEventListener('resize', () => {
+  var resizeTimer;
+  window.addEventListener('resize', function() {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      const canvas = document.getElementById('chart');
+    resizeTimer = setTimeout(function() {
       canvas.style.width = '100%';
       canvas.style.height = '';
       chart.resize();
-      reportHeight();
     }, 50);
   });
 
-  compute(); // initial render — runs after chart is constructed
-
-  // Tell parent iframe how tall we are so it can resize
-  function reportHeight() {
-    const h = document.documentElement.scrollHeight;
-    window.parent.postMessage({ iframeHeight: h }, '*');
-  }
-  new ResizeObserver(reportHeight).observe(document.body);
-  reportHeight();
+  compute();
 </script>
 </body>
 </html>
