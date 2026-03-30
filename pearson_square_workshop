@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pearson Square – Ration Formulation</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e8;
+  --card: #fffdf8;
+  --border: #d4c9b0;
+  --text: #2a2318;
+  --muted: #7a6e5f;
+  --accent: #3d6b4f;
+  --accent2: #8b4513;
+  --accent-light: #e8f0eb;
+  --error: #b54a2a;
+  --error-light: #fdf0ec;
+  --correct: #2d6a4f;
+  --correct-light: #eaf4ee;
+  --highlight: #c9a84c;
+  --highlight-light: #fdf6e3;
+  --line: #5a8c72;
+  --tab-h: 54px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── HEADER ── */
+.header{background:var(--accent);color:#fff;padding:22px 32px 18px;border-bottom:4px solid var(--highlight);position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,0.05);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:relative;}
+.header h1{font-family:'Lora',serif;font-size:1.5rem;font-weight:600;letter-spacing:-0.01em;}
+.header p{font-size:0.85rem;opacity:0.82;margin-top:3px;}
+.teach-btn{background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.4);color:#fff;padding:7px 15px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;white-space:nowrap;transition:background .2s;}
+.teach-btn:hover{background:rgba(255,255,255,0.25);}
+
+/* ── TEACH BANNER ── */
+#teachBanner{display:none;background:#7a3a10;color:#fff;padding:9px 24px;font-size:0.84rem;font-weight:600;align-items:center;gap:14px;justify-content:space-between;}
+.teach-exit{background:rgba(255,255,255,0.2);border:none;color:#fff;padding:4px 11px;border-radius:5px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;}
+
+/* ── TABS ── */
+.tab-bar{display:flex;background:#fff;border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{flex:1;min-width:130px;height:var(--tab-h);padding:0 16px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab-btn:hover{background:var(--accent-light);color:var(--accent);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;background:var(--accent-light);}
+.tab-icon{display:block;font-size:1.1rem;margin-bottom:2px;}
+
+/* ── PROGRESS ── */
+.progress-wrap{height:5px;background:var(--border);}
+.progress-bar{height:5px;background:linear-gradient(90deg,var(--accent),var(--highlight));transition:width .5s ease;width:0%;}
+
+/* ── TAB CONTENT ── */
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+.container{max-width:880px;margin:0 auto;padding:28px 20px 60px;}
+
+/* ── SCENARIO BOX ── */
+.scenario{background:var(--card);border:1.5px solid var(--border);border-left:5px solid var(--accent);border-radius:8px;padding:20px 24px;margin-bottom:24px;line-height:1.65;font-size:0.95rem;}
+.scenario strong{color:var(--accent2);}
+
+/* ── FEED TABLE ── */
+.feed-table{width:100%;border-collapse:collapse;font-size:0.85rem;margin-top:12px;font-family:'DM Mono',monospace;}
+.feed-table th{background:var(--accent);color:#fff;padding:7px 10px;text-align:left;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.8rem;}
+.feed-table td{padding:7px 10px;border-bottom:1px solid var(--border);}
+.feed-table tr:last-child td{border-bottom:none;}
+.feed-table tr:nth-child(even) td{background:rgba(0,0,0,0.02);}
+
+/* ── STEP CARDS ── */
+.step{background:var(--card);border:1.5px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;transition:box-shadow .25s;}
+.step.active{box-shadow:0 4px 20px rgba(61,107,79,0.15);border-color:var(--accent);}
+.step.completed{border-color:var(--correct);}
+.step.locked{opacity:.5;pointer-events:none;}
+.step-header{display:flex;align-items:center;gap:12px;padding:14px 20px;}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:0.88rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'DM Mono',monospace;}
+.step.completed .step-num{background:var(--correct);}
+.step-title{font-family:'Lora',serif;font-weight:600;font-size:1rem;}
+.step-status{margin-left:auto;font-size:1.1rem;}
+.step-body{padding:0 20px 20px;border-top:1px solid var(--border);}
+
+/* ── Q ROWS ── */
+.q-row{margin-top:16px;}
+.q-label{font-size:0.88rem;color:var(--muted);margin-bottom:6px;line-height:1.55;}
+.q-label strong{color:var(--text);}
+.input-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.ans-input{font-family:'DM Mono',monospace;font-size:.95rem;padding:7px 11px;border:2px solid var(--border);border-radius:6px;background:var(--bg);width:130px;color:var(--text);transition:border-color .2s;}
+.ans-input:focus{outline:none;border-color:var(--accent);}
+.ans-input.correct{border-color:var(--correct);background:var(--correct-light);}
+.ans-input.wrong{border-color:var(--error);background:var(--error-light);}
+.ans-input:disabled{opacity:.7;cursor:not-allowed;}
+.unit-label{font-size:0.84rem;color:var(--muted);font-family:'DM Mono',monospace;}
+
+/* ── BUTTONS ── */
+.check-btn{padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.84rem;cursor:pointer;transition:background .2s,transform .1s;}
+.check-btn:hover{background:#2d5a3f;}
+.check-btn:active{transform:scale(.97);}
+.next-btn{display:block;margin-top:16px;padding:9px 26px;background:var(--accent2);color:#fff;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.92rem;cursor:pointer;transition:background .2s,transform .1s;width:fit-content;}
+.next-btn:hover{background:#7a3a10;}
+.next-btn:active{transform:scale(.97);}
+.next-btn:disabled{opacity:.4;pointer-events:none;}
+.hint-toggle{background:none;border:1.5px solid var(--highlight);color:var(--highlight);border-radius:5px;padding:5px 11px;font-size:0.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:background .2s;}
+.hint-toggle:hover{background:var(--highlight-light);}
+
+/* ── FEEDBACK ── */
+.feedback{margin-top:8px;font-size:0.86rem;padding:8px 12px;border-radius:6px;display:none;line-height:1.5;}
+.feedback.show{display:block;}
+.feedback.ok{background:var(--correct-light);color:var(--correct);}
+.feedback.err{background:var(--error-light);color:var(--error);}
+.feedback.hint{background:var(--highlight-light);color:#7a5c00;}
+
+/* ── INFO BOX ── */
+.info-box{background:var(--highlight-light);border-left:4px solid var(--highlight);border-radius:0 6px 6px 0;padding:11px 15px;font-size:0.86rem;line-height:1.6;margin-top:12px;color:#5a4800;}
+
+/* ── DIVIDER ── */
+.section-divider{border:none;border-top:1.5px dashed var(--border);margin:16px 0;}
+
+/* ── PEARSON SQUARE ── */
+.ps-outer{max-width:640px;margin:16px auto 0;}
+.ps-grid{display:grid;grid-template-columns:155px 1fr 190px;align-items:stretch;gap:0;}
+.ps-left{display:flex;flex-direction:column;justify-content:space-between;padding-right:10px;padding-top:12px;padding-bottom:12px;gap:10px;}
+.ps-right{display:flex;flex-direction:column;justify-content:space-around;padding-left:10px;gap:8px;padding-top:12px;padding-bottom:12px;}
+.ps-svg-wrap{position:relative;min-height:210px;}
+.ps-svg-wrap svg{width:100%;height:100%;position:absolute;top:0;left:0;}
+.ps-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:2.5px solid var(--accent);border-radius:8px;padding:9px 13px;text-align:center;min-width:108px;box-shadow:0 2px 12px rgba(61,107,79,0.14);z-index:2;}
+.ps-center .c-tag{font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);margin-bottom:3px;}
+.ps-center .c-val{font-family:'DM Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent);}
+.ps-center .c-sub{font-size:0.68rem;color:var(--muted);margin-top:2px;font-style:italic;}
+.ps-ing{background:var(--card);border:2px solid var(--accent2);border-radius:8px;padding:10px 12px;font-size:0.82rem;}
+.ps-ing .i-tag{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--accent2);margin-bottom:3px;}
+.ps-ing .i-name{font-weight:600;color:var(--text);margin-bottom:2px;font-size:.83rem;}
+.ps-ing .i-val{font-family:'DM Mono',monospace;font-size:.98rem;color:var(--accent2);font-weight:600;}
+.ps-res{background:var(--card);border:2px solid var(--accent);border-radius:8px;padding:10px 12px;font-size:0.82rem;}
+.ps-res .r-tag{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);margin-bottom:2px;}
+.ps-res .r-eq{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-bottom:5px;}
+.ps-res-f{border-color:var(--highlight);}
+.ps-res-f .r-tag{color:#7a5c00;}
+.ps-box-input{font-family:'DM Mono',monospace;font-size:.9rem;padding:5px 7px;border:2px solid var(--border);border-radius:5px;background:var(--bg);width:100%;color:var(--text);transition:border-color .2s,background .2s;text-align:center;}
+.ps-box-input:focus{outline:none;border-color:var(--accent);}
+.ps-box-input.correct{border-color:var(--correct);background:var(--correct-light);}
+.ps-box-input.wrong{border-color:var(--error);background:var(--error-light);}
+.ps-box-input:disabled{opacity:.75;cursor:not-allowed;}
+
+/* ── WORKED EXAMPLE CALLOUT ── */
+.worked-step{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:14px;}
+.worked-step h4{font-family:'Lora',serif;font-size:.95rem;color:var(--accent);margin-bottom:8px;}
+.worked-step p,.worked-step li{font-size:.88rem;line-height:1.6;color:var(--muted);}
+.worked-step strong{color:var(--text);}
+.worked-step ol{padding-left:18px;margin-top:6px;}
+
+/* ── COMPLETION ── */
+.completion-banner{display:none;background:linear-gradient(135deg,var(--accent) 0%,#2d5a3f 100%);color:#fff;border-radius:10px;padding:28px;text-align:center;margin-top:24px;}
+.completion-banner.show{display:block;animation:popIn .4s ease;}
+.completion-banner h2{font-family:'Lora',serif;font-size:1.4rem;margin-bottom:8px;}
+.completion-banner p{opacity:.9;font-size:.92rem;line-height:1.6;}
+@keyframes popIn{from{transform:scale(.95);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+/* ── SHAKE ── */
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+.shake{animation:shake .35s ease;}
+
+/* ── BULL SECTION HEADING ── */
+.sq-heading{font-family:'Lora',serif;font-size:1.05rem;color:var(--accent2);margin:24px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--border);}
+
+/* ── MIX TABLE ── */
+.mix-table{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:10px;}
+.mix-table th{background:#4a3520;color:#fff;padding:7px 10px;text-align:left;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.78rem;}
+.mix-table td{padding:7px 10px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;}
+.mix-table tr:last-child td{background:var(--accent-light);font-weight:600;font-family:'DM Sans',sans-serif;}
+
+/* ── FREE SQUARE ── */
+.free-section{background:var(--card);border:2px solid var(--highlight);border-radius:12px;overflow:hidden;margin-top:8px;}
+.free-header{background:var(--highlight);padding:14px 22px;color:#fff;}
+.free-header h3{font-family:'Lora',serif;font-size:1rem;font-weight:600;}
+.free-body{padding:20px 22px;}
+.free-scenario{background:var(--highlight-light);border-left:4px solid var(--highlight);border-radius:0 6px 6px 0;padding:11px 15px;margin-bottom:16px;font-size:.88rem;line-height:1.6;color:#5a4800;}
+
+/* ── PRINT STYLES ── */
+@media print {
+  .tab-bar, .progress-wrap, #teachBanner, #teachModeBtn,
+  #psIntro, .next-btn, .check-btn, .hint-toggle,
+  .step.locked, .no-print { display: none !important; }
+  .step { box-shadow: none !important; border: 1px solid #ccc !important; break-inside: avoid; }
+  .step.active, .step.completed { display: block !important; }
+  .tab-pane { display: block !important; }
+  .tab-pane.print-hide { display: none !important; }
+  body { background: #fff !important; font-size: 11pt; }
+  .container { max-width: 100%; padding: 8px; }
+  .header { padding: 12px 20px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .completion-banner { print-color-adjust: exact; -webkit-print-color-adjust: exact; break-inside: avoid; }
+  .ps-svg-wrap { min-height: 160px; }
+  .print-header { display: flex !important; }
+  @page { margin: 1.5cm; }
+}
+.print-header { display: none; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .ps-grid{grid-template-columns:120px 1fr 155px;}
+  .tab-btn{min-width:100px;font-size:.78rem;padding:0 10px;}
+  .header h1{font-size:1.2rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<!-- Print-only header strip (hidden on screen, shown on print) -->
+<div class="print-header" style="border-bottom:2px solid #3d6b4f;padding:6px 20px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+  <span style="font-weight:700;font-family:'DM Sans',sans-serif;font-size:11pt;">ANUT300/500 — Pearson Square Practical</span>
+  <span id="print_namedate" style="font-size:10pt;font-family:'DM Mono',monospace;"></span>
+</div>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <h1>🌾 Ration Formulation: Pearson Square</h1>
+      <p>ANUT300/500 · Feedlot Ration Formulation Practical</p>
+    </div>
+    <button class="teach-btn" id="teachModeBtn" onclick="promptTeach()">🔐 Teaching Mode</button>
+  </div>
+</div>
+<div id="teachBanner">
+  <span>🎓 Teaching Mode active — all steps unlocked. Password required to enable.</span>
+  <button class="teach-exit" onclick="exitTeach()">Exit Teaching Mode</button>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('worked')" id="tab-worked">
+    <span class="tab-icon">📖</span>Worked Example
+  </button>
+  <button class="tab-btn" onclick="switchTab('mare')" id="tab-mare">
+    <span class="tab-icon">🐴</span>Q1: Mare
+  </button>
+  <button class="tab-btn" onclick="switchTab('bull')" id="tab-bull">
+    <span class="tab-icon">🐂</span>Q2: Stud Bull
+  </button>
+  <button class="tab-btn" onclick="switchTab('free')" id="tab-free">
+    <span class="tab-icon">✏️</span>Your Own Values
+  </button>
+</div>
+
+<!-- INTRO DESCRIPTION -->
+<div id="psIntro" style="background:#fffdf8;border-bottom:2px solid #d4c9b0;padding:16px 32px;">
+  <div style="max-width:880px;margin:0 auto;">
+    <details>
+      <summary style="font-family:'Lora',serif;font-size:1rem;font-weight:600;color:#3d6b4f;cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:8px;">
+        <span id="introArrow" style="font-size:0.8rem;transition:transform .2s;">▶</span>
+        <span>What is the Pearson Square method?</span>
+      </summary>
+      <div style="margin-top:14px;">
+
+        <!-- Text explanation -->
+        <p style="font-size:0.88rem;line-height:1.7;color:#5a4e40;margin-bottom:8px;">
+          The <strong>Pearson Square</strong> is a method for balancing simple rations with two ingredients.
+          You can use it when you want to substitute between ingredients to meet an animal's nutrient requirement.
+          The square tells you what <strong>mix of two ingredients</strong> will give the right nutrient content in the final ration.
+          Ingredients must be compared on a <strong>like basis</strong> (both DM or both as-fed).
+          The method works for any nutrient: CP, energy, amino acids, minerals, etc.
+        </p>
+        <p style="font-size:0.85rem;line-height:1.6;color:#7a6e5f;margin-bottom:14px;font-style:italic;">
+          One ingredient must have a nutrient value above the target (Box A) and one below it — it does not matter which sits top or bottom on the square.
+          Always make any negative numbers positive: we are interested in the <em>difference</em> between A&amp;B or A&amp;C only.
+        </p>
+
+        <!-- Diagram — simple clean grid, no absolute positioning -->
+        <div style="display:grid;grid-template-columns:150px 1fr 165px;grid-template-rows:auto auto;gap:10px;max-width:560px;align-items:stretch;margin-bottom:12px;">
+
+          <!-- Row 1 left: Box B -->
+          <div style="background:#fffdf8;border:2px solid #8b4513;border-radius:8px;padding:10px 12px;font-size:0.82rem;grid-row:1/2;grid-column:1/2;">
+            <div style="font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#8b4513;margin-bottom:3px;">Box B</div>
+            <div style="font-weight:600;color:#2a2318;margin-bottom:2px;">Ingredient 1</div>
+            <div style="font-family:'DM Mono',monospace;color:#8b4513;font-size:0.82rem;">nutrient value %</div>
+          </div>
+
+          <!-- Row 1 centre: SVG square spanning both rows -->
+          <div style="grid-row:1/3;grid-column:2/3;position:relative;min-height:180px;">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;position:absolute;top:0;left:0;">
+              <rect x="4" y="4" width="192" height="192" fill="none" stroke="#5a8c72" stroke-width="2.5" rx="4"/>
+              <line x1="4" y1="4" x2="196" y2="196" stroke="#5a8c72" stroke-width="2"/>
+              <polygon points="196,196 182,188 188,182" fill="#5a8c72"/>
+              <line x1="4" y1="196" x2="196" y2="4" stroke="#5a8c72" stroke-width="2"/>
+              <polygon points="196,4 182,12 188,18" fill="#5a8c72"/>
+            </svg>
+            <!-- Box A sits in the centre using flex rather than absolute -->
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fffdf8;border:2.5px solid #3d6b4f;border-radius:8px;padding:9px 12px;text-align:center;width:110px;z-index:2;box-shadow:0 2px 8px rgba(61,107,79,0.12);">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#3d6b4f;margin-bottom:3px;">Box A</div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.88rem;font-weight:700;color:#3d6b4f;">Target %</div>
+              <div style="font-size:0.65rem;color:#7a6e5f;margin-top:2px;font-style:italic;">between B &amp; C</div>
+            </div>
+          </div>
+
+          <!-- Row 1 right: Box D and Box F stacked -->
+          <div style="grid-row:1/2;grid-column:3/4;display:flex;flex-direction:column;gap:8px;">
+            <div style="background:#fffdf8;border:2px solid #3d6b4f;border-radius:8px;padding:9px 11px;font-size:0.8rem;flex:1;">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;color:#3d6b4f;margin-bottom:2px;">Box D</div>
+              <div style="font-family:'DM Mono',monospace;color:#7a6e5f;font-size:0.75rem;">= |A − C|</div>
+              <div style="color:#5a4e40;font-size:0.75rem;margin-top:2px;">parts of ingr. 1</div>
+            </div>
+            <div style="background:#fffdf8;border:2px solid #c9a84c;border-radius:8px;padding:9px 11px;font-size:0.8rem;flex:1;">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;color:#7a5c00;margin-bottom:2px;">Box F</div>
+              <div style="font-family:'DM Mono',monospace;color:#7a6e5f;font-size:0.75rem;">= D + E</div>
+              <div style="color:#5a4e40;font-size:0.75rem;margin-top:2px;">total parts</div>
+            </div>
+          </div>
+
+          <!-- Row 2 left: Box C -->
+          <div style="background:#fffdf8;border:2px solid #8b4513;border-radius:8px;padding:10px 12px;font-size:0.82rem;grid-row:2/3;grid-column:1/2;">
+            <div style="font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#8b4513;margin-bottom:3px;">Box C</div>
+            <div style="font-weight:600;color:#2a2318;margin-bottom:2px;">Ingredient 2</div>
+            <div style="font-family:'DM Mono',monospace;color:#8b4513;font-size:0.82rem;">nutrient value %</div>
+          </div>
+
+          <!-- Row 2 right: Box E -->
+          <div style="background:#fffdf8;border:2px solid #3d6b4f;border-radius:8px;padding:9px 11px;font-size:0.8rem;grid-row:2/3;grid-column:3/4;">
+            <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;color:#3d6b4f;margin-bottom:2px;">Box E</div>
+            <div style="font-family:'DM Mono',monospace;color:#7a6e5f;font-size:0.75rem;">= |B − A|</div>
+            <div style="color:#5a4e40;font-size:0.75rem;margin-top:2px;">parts of ingr. 2</div>
+          </div>
+
+        </div><!-- /diagram grid -->
+
+        <p style="font-size:0.78rem;color:#7a6e5f;font-style:italic;margin-bottom:4px;">
+          See Hynd's Animal Nutrition: From Theory to Practice, p 101–102
+        </p>
+
+        <!-- Bullet summary -->
+        <ul style="font-size:0.86rem;line-height:1.8;color:#5a4e40;padding-left:18px;margin-top:10px;">
+          <li>Subtract across the diagonal and make any negative results positive</li>
+          <li>Divide each part by the total (Box F) and multiply by 100 to get the % of each ingredient in the ration</li>
+          <li>Can be used for any nutrient: CP, ME, DE, amino acids, minerals</li>
+        </ul>
+
+      </div>
+    </details>
+  </div>
+</div>
+<script>
+  document.querySelector('#psIntro details').addEventListener('toggle', function(){
+    document.getElementById('introArrow').style.transform = this.open ? 'rotate(90deg)' : '';
+  });
+</script>
+
+
+<!-- ═══════════════════════════════════════════════
+     TAB 1: WORKED EXAMPLE
+═══════════════════════════════════════════════ -->
+<div class="tab-pane active" id="pane-worked">
+<div class="container">
+
+  <div class="scenario">
+    <strong>Worked Example:</strong> A <strong>500 kg cow</strong> requires <strong>15% CP</strong> in her diet.
+    The ingredients we have to feed her are <strong>Soybean meal</strong> and <strong>Corn</strong>.
+    What proportions do we need to mix these two ingredients to obtain a ration that provides her required 15% CP?
+  </div>
+
+  <table class="feed-table" style="margin-bottom:20px;">
+    <thead><tr><th>Feed ingredient</th><th>CP (% DM)</th></tr></thead>
+    <tbody>
+      <tr><td>Soybean meal</td><td>45%</td></tr>
+      <tr><td>Corn</td><td>10%</td></tr>
+    </tbody>
+  </table>
+
+  <div id="w-reveal-container">
+
+    <div class="worked-step" id="w-step1">
+      <h4>Step 1 — Identify Box A, B and C</h4>
+      <p>One ingredient must have a nutrient value <em>above</em> the target, and one <em>below</em> it. The target (Box A) must sit between the two. It does not matter which ingredient is placed top or bottom on the square — only that one sits above A and one below.</p>
+      <p style="margin-top:8px;"><strong>Box A</strong> (centre) = the nutrient requirement = <strong>15% CP</strong></p>
+      <p><strong>Box B</strong> = one ingredient = <strong>Soybean Meal, 45% CP</strong> (above target)</p>
+      <p><strong>Box C</strong> = other ingredient = <strong>Corn, 10% CP</strong> (below target)</p>
+      <p style="margin-top:8px;">✓ Check: is Box A between B and C? &nbsp; 10% &lt; <strong>15%</strong> &lt; 45% — yes, the Pearson Square will work.</p>
+    </div>
+
+    <div id="w-step2" style="display:none;">
+      <div class="worked-step">
+        <h4>Step 2 — Subtract across the diagonal</h4>
+        <p>Subtract across the diagonal of the square. Always make any negative results positive — we only care about the <em>difference</em>.</p>
+        <div class="ps-outer" style="margin-top:14px;">
+          <div class="ps-grid">
+            <div class="ps-left">
+              <div class="ps-ing"><div class="i-tag">Box B</div><div class="i-name">Soybean Meal</div><div class="i-val">45% CP</div></div>
+              <div class="ps-ing"><div class="i-tag">Box C</div><div class="i-name">Corn</div><div class="i-val">10% CP</div></div>
+            </div>
+            <div class="ps-svg-wrap">
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="4" width="192" height="192" fill="none" stroke="#5a8c72" stroke-width="2.5" rx="4"/>
+                <line x1="4" y1="4" x2="196" y2="196" stroke="#5a8c72" stroke-width="2"/>
+                <polygon points="196,196 182,188 188,182" fill="#5a8c72"/>
+                <line x1="4" y1="196" x2="196" y2="4" stroke="#5a8c72" stroke-width="2"/>
+                <polygon points="196,4 182,12 188,18" fill="#5a8c72"/>
+              </svg>
+              <div class="ps-center"><div class="c-tag">Box A</div><div class="c-val">15% CP</div><div class="c-sub">required</div></div>
+            </div>
+            <div class="ps-right">
+              <div class="ps-res"><div class="r-tag">Box D — SBM parts</div><div class="r-eq">= |A − C| = |15 − 10|</div><div style="font-family:'DM Mono',monospace;font-size:1.05rem;font-weight:700;color:#3d6b4f;margin-top:4px;">= 5 parts</div></div>
+              <div class="ps-res ps-res-f"><div class="r-tag">Box F — Total parts</div><div class="r-eq">= D + E = 5 + 30</div><div style="font-family:'DM Mono',monospace;font-size:1.05rem;font-weight:700;color:#7a5c00;margin-top:4px;">= 35 parts</div></div>
+              <div class="ps-res"><div class="r-tag">Box E — Corn parts</div><div class="r-eq">= |B − A| = |45 − 15|</div><div style="font-family:'DM Mono',monospace;font-size:1.05rem;font-weight:700;color:#3d6b4f;margin-top:4px;">= 30 parts</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="w-step3" style="display:none;">
+      <div class="worked-step">
+        <h4>Step 3 — Convert parts to % of ration</h4>
+        <p>Divide each ingredient's parts by the total parts (Box F), then multiply by 100.</p>
+        <ol style="margin-top:10px;">
+          <li><strong>Soybean meal</strong>: 5 parts ÷ 35 total parts = 0.143 × 100 = <strong>14.3% soybean meal</strong></li>
+          <li style="margin-top:6px;"><strong>Corn</strong>: 30 parts ÷ 35 total parts = 0.857 × 100 = <strong>85.7% corn</strong></li>
+        </ol>
+      </div>
+    </div>
+
+    <div id="w-step4" style="display:none;">
+      <div class="completion-banner show" style="margin-top:8px;">
+        <div style="font-size:2.5rem;margin-bottom:10px">✅</div>
+        <h2>Worked example complete!</h2>
+        <p style="margin-top:10px;">Mix <strong>14.3% Soybean Meal</strong> with <strong>85.7% Corn</strong> to achieve a 15% CP ration.<br>
+        Now try the interactive questions using the tabs above.</p>
+      </div>
+    </div>
+
+  </div><!-- /w-reveal-container -->
+
+  <div style="margin-top:18px;">
+    <button class="next-btn" id="w-reveal-btn" onclick="revealWorkedStep()">Show next step →</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 2: MARE QUESTION
+═══════════════════════════════════════════════ -->
+<div class="tab-pane" id="pane-mare">
+<div class="progress-wrap"><div class="progress-bar" id="prog-mare"></div></div>
+<div class="container">
+
+  <div class="scenario">
+    <strong>Question 1:</strong> A <strong>560 kg mare</strong> in her last month of pregnancy has a minimum DE* requirement of
+    <strong>90 MJ/day</strong> and a minimum crude protein requirement of <strong>910 g/day</strong>.
+    We can assume that she has a DM feed intake of <strong>2.5% of her liveweight</strong>.
+    She is being fed oaten chaff and a commercial concentrate pellet.<br>
+    <em style="font-size:0.85rem;color:var(--muted);">* In horses we usually use DE rather than ME</em>
+    <br><br>
+    <table class="feed-table">
+      <thead><tr><th>Feed ingredient</th><th>% DM</th><th>DE (MJ/kg DM)</th><th>CP (% DM)</th><th>Sale price</th></tr></thead>
+      <tbody>
+        <tr><td>Oaten chaff</td><td>87%</td><td>6.6</td><td>2.8%</td><td>$24 / 25 kg bag</td></tr>
+        <tr><td>Commercial pellet</td><td>93%</td><td>13</td><td>13%</td><td>$30 / 20 kg bag</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- M1: Costs -->
+  <div class="step active" id="mstep1">
+    <div class="step-header"><div class="step-num">1</div><div class="step-title">Calculate cost per kg (as-fed and DM basis)</div><div class="step-status" id="mstatus1">🔓</div></div>
+    <div class="step-body">
+
+      <!-- DM / Cost Triangle memory aid -->
+      <div style="background:#f0f6f2;border:1.5px solid #5a8c72;border-radius:8px;padding:14px 18px;margin-top:14px;margin-bottom:4px;">
+        <div style="font-size:0.85rem;font-weight:600;color:#3d6b4f;margin-bottom:10px;">📐 Memory aid — cost per kg DM</div>
+        <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;">
+
+          <!-- Triangle SVG -->
+          <div style="flex-shrink:0;">
+            <svg width="150" height="128" viewBox="0 0 150 128" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+              <polygon points="75,6 143,118 7,118" fill="#fff7ee" stroke="#8b4513" stroke-width="2.5" stroke-linejoin="round"/>
+              <line x1="40" y1="74" x2="110" y2="74" stroke="#8b4513" stroke-width="2"/>
+              <!-- Top: $/kg DM -->
+              <text x="75" y="60" text-anchor="middle" font-family="DM Mono, monospace" font-size="12" font-weight="700" fill="#8b4513">$/kg DM</text>
+              <!-- Bottom left: $/kg AF -->
+              <text x="43" y="100" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" font-weight="700" fill="#2d6a4f">$/kg AF</text>
+              <!-- multiply symbol -->
+              <text x="75" y="98" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" fill="#5a4e40">×</text>
+              <!-- Bottom right: DM% -->
+              <text x="108" y="100" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" font-weight="700" fill="#2d6a4f">DM%</text>
+              <!-- hint text -->
+              <text x="10" y="22" font-family="DM Sans, sans-serif" font-size="8.5" fill="#7a6e5f">cover</text>
+              <text x="10" y="33" font-family="DM Sans, sans-serif" font-size="8.5" fill="#7a6e5f">what you</text>
+              <text x="10" y="44" font-family="DM Sans, sans-serif" font-size="8.5" fill="#7a6e5f">want</text>
+            </svg>
+          </div>
+
+          <!-- Formula cards — cost only -->
+          <div style="flex:1;min-width:190px;">
+            <p style="font-size:0.84rem;color:#3a3228;margin-bottom:8px;">Cover the value you want to find:</p>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="background:#fff7ee;border:1px solid #d4b896;border-radius:6px;padding:7px 12px;font-size:0.81rem;line-height:1.6;">
+                <div style="color:#7a6e5f;font-family:'DM Sans',sans-serif;margin-bottom:2px;">Want <strong style="color:#8b4513;">$/kg DM</strong>?</div>
+                <div style="font-family:'DM Mono',monospace;font-size:0.8rem;"><strong>$/kg as-fed &divide; DM% (decimal)</strong></div>
+                <div style="font-size:0.75rem;color:#7a6e5f;margin-top:3px;font-style:italic;">e.g. $1.20 &divide; 0.90 = $1.33/kg DM</div>
+              </div>
+              <div style="background:#fff7ee;border:1px solid #d4b896;border-radius:6px;padding:7px 12px;font-size:0.81rem;line-height:1.6;">
+                <div style="color:#7a6e5f;font-family:'DM Sans',sans-serif;margin-bottom:2px;">Want <strong style="color:#2d6a4f;">$/kg as-fed</strong>?</div>
+                <div style="font-family:'DM Mono',monospace;font-size:0.8rem;"><strong>$/kg DM &times; DM% (decimal)</strong></div>
+                <div style="font-size:0.75rem;color:#7a6e5f;margin-top:3px;font-style:italic;">e.g. $1.33 &times; 0.90 = $1.20/kg as-fed</div>
+              </div>
+            </div>
+            <p style="font-size:0.76rem;color:#7a6e5f;font-style:italic;margin-top:8px;">DM% as a decimal: e.g. 87% = 0.87</p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="q-row"><div class="q-label"><strong>Oaten chaff</strong>: $24 per 25 kg bag. Cost per kg as-fed?</div>
+        <div class="input-row"><input class="ans-input" id="m_chaff_af" type="number" step="0.001" placeholder="0.000"><span class="unit-label">$/kg as-fed</span><button class="check-btn" onclick="checkNum('m_chaff_af',0.96,0.02,'m_chaff_af_fb','= $24÷25 = $0.96/kg','mare',1)">Check</button></div>
+        <div class="feedback" id="m_chaff_af_fb"></div></div>
+      <div class="q-row"><div class="q-label">Now calculate the cost per kg DM for oaten chaff. Use the memory aid above.</div>
+        <div class="input-row"><input class="ans-input" id="m_chaff_dm" type="number" step="0.001" placeholder="0.000"><span class="unit-label">$/kg DM</span><button class="check-btn" onclick="checkNum('m_chaff_dm',1.103,0.02,'m_chaff_dm_fb','= $0.96÷0.87 = $1.10/kg DM','mare',1)">Check</button></div>
+        <div class="feedback" id="m_chaff_dm_fb"></div></div>
+      <hr class="section-divider">
+      <div class="q-row"><div class="q-label"><strong>Commercial pellet</strong>: $30 per 20 kg bag. Cost per kg as-fed?</div>
+        <div class="input-row"><input class="ans-input" id="m_pellet_af" type="number" step="0.001" placeholder="0.000"><span class="unit-label">$/kg as-fed</span><button class="check-btn" onclick="checkNum('m_pellet_af',1.50,0.02,'m_pellet_af_fb','= $30÷20 = $1.50/kg','mare',1)">Check</button></div>
+        <div class="feedback" id="m_pellet_af_fb"></div></div>
+      <div class="q-row"><div class="q-label">Now calculate the cost per kg DM for the commercial pellet. Use the memory aid above.</div>
+        <div class="input-row"><input class="ans-input" id="m_pellet_dm" type="number" step="0.001" placeholder="0.000"><span class="unit-label">$/kg DM</span><button class="check-btn" onclick="checkNum('m_pellet_dm',1.613,0.02,'m_pellet_dm_fb','= $1.50÷0.93 = $1.61/kg DM','mare',1)">Check</button></div>
+        <div class="feedback" id="m_pellet_dm_fb"></div></div>
+      <button class="next-btn" id="mnext1" onclick="unlockMStep(2)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <!-- M2: DM intake -->
+  <div class="step locked" id="mstep2">
+    <div class="step-header"><div class="step-num">2</div><div class="step-title">Calculate the mare's required DM intake</div><div class="step-status" id="mstatus2">🔒</div></div>
+    <div class="step-body">
+      <div class="q-row"><div class="q-label">Use the weight of the animal and her feed intake expressed as a percentage of liveweight to calculate her daily dry matter intake.</div>
+        <div class="input-row"><input class="ans-input" id="m_dmi" type="number" step="0.1" placeholder="0.0"><span class="unit-label">kg DM/day</span><button class="check-btn" onclick="checkNum('m_dmi',14.0,0.2,'m_dmi_fb','= 560×0.025 = 14.0 kg DM/day','mare',2)">Check</button></div>
+        <div class="feedback" id="m_dmi_fb"></div></div>
+      <button class="next-btn" id="mnext2" onclick="unlockMStep(3)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <!-- M3: DE check -->
+  <div class="step locked" id="mstep3">
+    <div class="step-header"><div class="step-num">3</div><div class="step-title">Does either feed meet the DE requirement?</div><div class="step-status" id="mstatus3">🔒</div></div>
+    <div class="step-body">
+      <div class="info-box">Calculate the required DE concentration in the ration (MJ/kg DM), then compare it to the DE content of each feed.</div>
+      <div class="q-row"><div class="q-label">Use the energy requirement and how much the mare will eat to determine how much energy per kg of DM is needed in the ration.</div>
+        <div class="input-row"><input class="ans-input" id="m_de_req" type="number" step="0.01" placeholder="0.00"><span class="unit-label">MJ/kg DM</span><button class="check-btn" onclick="checkNum('m_de_req',6.43,0.1,'m_de_req_fb','= 90÷14.0 = 6.43 MJ/kg DM','mare',3)">Check</button></div>
+        <div class="feedback" id="m_de_req_fb"></div></div>
+      <div class="q-row"><div class="q-label">Oaten chaff provides 6.6 MJ/kg DM. Compare this to the required DE concentration you just calculated — does oaten chaff alone meet the requirement?</div>
+        <div class="input-row">
+          <select class="ans-input" id="m_de_meets" style="width:150px;font-family:'DM Sans',sans-serif;">
+            <option value="">-- select --</option><option value="yes">Yes</option><option value="no">No</option>
+          </select>
+          <button class="check-btn" onclick="checkSel('m_de_meets','yes','m_de_meets_fb','Correct! 6.6 > 6.43, so chaff meets DE. Any mix of both feeds will also meet DE — we only need to balance for CP.','Not quite — compare the DE content of oaten chaff to the value you calculated above.')">Check</button>
+        </div>
+        <div class="feedback" id="m_de_meets_fb"></div></div>
+      <button class="next-btn" id="mnext3" onclick="unlockMStep(4)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <!-- M4: CP req -->
+  <div class="step locked" id="mstep4">
+    <div class="step-header"><div class="step-num">4</div><div class="step-title">Calculate required CP concentration in the ration</div><div class="step-status" id="mstatus4">🔒</div></div>
+    <div class="step-body">
+      <div class="q-row"><div class="q-label">The mare requires 910 g CP/day. Use her daily DM intake (from Step 2) to calculate the required CP concentration in the ration (% DM).<br><em style="font-size:0.82rem;color:var(--muted);">Hint: convert g to kg first, then think about what % means.</em></div>
+        <div class="input-row"><input class="ans-input" id="m_cp_req" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% CP (DM basis)</span><button class="check-btn" onclick="checkNum('m_cp_req',6.5,0.3,'m_cp_req_fb','= (0.91÷14.0)×100 = 6.5% CP','mare',4)">Check</button></div>
+        <div class="feedback" id="m_cp_req_fb"></div></div>
+      <div class="q-row"><div class="q-label">Check: is the required CP concentration between the CP content of the two feeds? The Pearson Square only works if the target is intermediate between the two ingredients.</div>
+        <div class="input-row">
+          <select class="ans-input" id="m_cp_between" style="width:150px;font-family:'DM Sans',sans-serif;">
+            <option value="">-- select --</option><option value="yes">Yes</option><option value="no">No</option>
+          </select>
+          <button class="check-btn" onclick="checkSel('m_cp_between','yes','m_cp_between_fb','Correct! The required CP concentration sits between the two feeds — the Pearson Square will work.','Check again — compare your calculated CP% to the CP content of both feeds.')">Check</button>
+        </div>
+        <div class="feedback" id="m_cp_between_fb"></div></div>
+      <button class="next-btn" id="mnext4" onclick="unlockMStep(5)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <!-- M5: Pearson Square -->
+  <div class="step locked" id="mstep5">
+    <div class="step-header"><div class="step-num">5</div><div class="step-title">Apply the Pearson Square for CP</div><div class="step-status" id="mstatus5">🔒</div></div>
+    <div class="step-body">
+      <div class="info-box">Use the CP values from the feed table and your calculated CP requirement to fill in the square. Remember: one feed must be above the target, one below.</div>
+      <div class="ps-outer">
+        <div class="ps-grid">
+          <div class="ps-left">
+            <div class="ps-ing"><div class="i-tag">Box B</div><div class="i-name">Commercial Pellet</div><div class="i-val">13% CP</div></div>
+            <div class="ps-ing"><div class="i-tag">Box C</div><div class="i-name">Oaten Chaff</div><div class="i-val">2.8% CP</div></div>
+          </div>
+          <div class="ps-svg-wrap">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="192" height="192" fill="none" stroke="#5a8c72" stroke-width="2.5" rx="4"/>
+              <line x1="4" y1="4" x2="196" y2="196" stroke="#5a8c72" stroke-width="2"/>
+              <polygon points="196,196 182,188 188,182" fill="#5a8c72"/>
+              <line x1="4" y1="196" x2="196" y2="4" stroke="#5a8c72" stroke-width="2"/>
+              <polygon points="196,4 182,12 188,18" fill="#5a8c72"/>
+            </svg>
+            <div class="ps-center"><div class="c-tag">Box A — Required CP%</div><input class="ps-box-input" id="m_A" type="number" step="0.1" placeholder="?" style="font-size:1rem;font-weight:700;color:var(--accent);width:80px;margin:4px auto 0;"><div class="c-sub">from Step 4</div></div>
+          </div>
+          <div class="ps-right">
+            <div class="ps-res"><div class="r-tag">Box D — Pellet parts</div><input class="ps-box-input" id="m_D" type="number" step="0.1" placeholder="?"></div>
+            <div class="ps-res ps-res-f"><div class="r-tag">Box F — Total parts</div><input class="ps-box-input" id="m_F" type="number" step="0.1" placeholder="?"></div>
+            <div class="ps-res"><div class="r-tag">Box E — Chaff parts</div><input class="ps-box-input" id="m_E" type="number" step="0.1" placeholder="?"></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="check-btn" onclick="checkMareSquare()">Check Square</button>
+        <button class="hint-toggle" onclick="toggleHint('m_sq_hint')">💡 Hint</button>
+      </div>
+      <div class="feedback hint" id="m_sq_hint" style="display:none;"><strong>Reminder:</strong> D = |A − C| &nbsp;|&nbsp; E = |B − A| &nbsp;|&nbsp; F = D + E<br>Subtract across the diagonal and make all results positive.</div>
+      <div class="feedback" id="m_sq_fb"></div>
+      <button class="next-btn" id="mnext5" onclick="unlockMStep(6)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <!-- M6: % of ration -->
+  <div class="step locked" id="mstep6">
+    <div class="step-header"><div class="step-num">6</div><div class="step-title">Convert parts to % of ration (DM basis)</div><div class="step-status" id="mstatus6">🔒</div></div>
+    <div class="step-body">
+      <div class="info-box">Divide each ingredient's parts (from the Pearson Square) by the total parts, then multiply by 100. Refer to the worked example tab if you need a reminder of this step.</div>
+      <div class="q-row"><div class="q-label"><strong>What percentage of the ration (DM basis) is commercial pellet?</strong><br>Use the parts from your Pearson Square — divide the pellet parts by the total parts and multiply by 100.</div>
+        <div class="input-row"><input class="ans-input" id="m_pct_pellet" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% (DM basis)</span><button class="check-btn" onclick="checkNum('m_pct_pellet',36.3,1.0,'m_pct_pellet_fb','= 3.7÷10.2×100 = 36.3% pellet','mare',6)">Check</button></div>
+        <div class="feedback" id="m_pct_pellet_fb"></div></div>
+      <div class="q-row"><div class="q-label"><strong>What percentage of the ration (DM basis) is oaten chaff?</strong></div>
+        <div class="input-row"><input class="ans-input" id="m_pct_chaff" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% (DM basis)</span><button class="check-btn" onclick="checkNum('m_pct_chaff',63.7,1.0,'m_pct_chaff_fb','= 6.5÷10.2×100 = 63.7% chaff','mare',6)">Check</button></div>
+        <div class="feedback" id="m_pct_chaff_fb"></div></div>
+      <button class="next-btn" id="mnext6" onclick="unlockMStep(7)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <!-- M7: As-fed -->
+  <div class="step locked" id="mstep7">
+    <div class="step-header"><div class="step-num">7</div><div class="step-title">Convert to fresh weight (as-fed)</div><div class="step-status" id="mstatus7">🔒</div></div>
+    <div class="step-body">
+      <div style="background:#f0f6f2;border:1.5px solid #5a8c72;border-radius:8px;padding:14px 18px;margin-top:14px;margin-bottom:4px;">
+        <div style="font-size:0.85rem;font-weight:600;color:#3d6b4f;margin-bottom:10px;">📐 Memory aid — converting kg DM ↔ kg as-fed</div>
+        <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;">
+          <div style="flex-shrink:0;">
+            <svg width="140" height="120" viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+              <polygon points="70,6 134,110 6,110" fill="#e8f4ee" stroke="#3d6b4f" stroke-width="2.5" stroke-linejoin="round"/>
+              <line x1="38" y1="68" x2="102" y2="68" stroke="#3d6b4f" stroke-width="2"/>
+              <text x="70" y="58" text-anchor="middle" font-family="DM Mono, monospace" font-size="15" font-weight="700" fill="#2d6a4f">DM</text>
+              <text x="44" y="97" text-anchor="middle" font-family="DM Mono, monospace" font-size="13" font-weight="700" fill="#8b4513">AF</text>
+              <text x="70" y="92" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" fill="#5a4e40">×</text>
+              <text x="98" y="97" text-anchor="middle" font-family="DM Mono, monospace" font-size="12" font-weight="700" fill="#8b4513">DM%</text>
+              <text x="10" y="20" font-family="DM Sans, sans-serif" font-size="9" fill="#7a6e5f">cover</text>
+              <text x="10" y="30" font-family="DM Sans, sans-serif" font-size="9" fill="#7a6e5f">what you</text>
+              <text x="10" y="40" font-family="DM Sans, sans-serif" font-size="9" fill="#7a6e5f">want</text>
+            </svg>
+          </div>
+          <div style="flex:1;min-width:200px;">
+            <p style="font-size:0.84rem;color:#3a3228;margin-bottom:8px;">You now have <strong>kg DM</strong> per ingredient and need to convert to <strong>kg as-fed</strong> (what goes in the feed bucket).</p>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="background:#fff;border:1px solid #b0d4be;border-radius:6px;padding:7px 12px;font-size:0.81rem;line-height:1.6;">
+                <div style="color:#7a6e5f;font-family:'DM Sans',sans-serif;margin-bottom:2px;">Want <strong style="color:#2d6a4f;">DM (kg)</strong>?</div>
+                <div style="font-family:'DM Mono',monospace;font-size:0.8rem;"><strong>as-fed (kg) &times; DM% (as decimal)</strong></div>
+              </div>
+              <div style="background:#fff;border:1px solid #b0d4be;border-radius:6px;padding:7px 12px;font-size:0.81rem;line-height:1.6;">
+                <div style="color:#7a6e5f;font-family:'DM Sans',sans-serif;margin-bottom:2px;">Want <strong style="color:#8b4513;">as-fed (kg)</strong>?</div>
+                <div style="font-family:'DM Mono',monospace;font-size:0.8rem;"><strong>DM (kg) &divide; DM% (as decimal)</strong></div>
+              </div>
+              <div style="background:#fff;border:1px solid #b0d4be;border-radius:6px;padding:7px 12px;font-size:0.81rem;line-height:1.6;">
+                <div style="color:#7a6e5f;font-family:'DM Sans',sans-serif;margin-bottom:2px;">Want <strong style="color:#8b4513;">DM% (decimal)</strong>?</div>
+                <div style="font-family:'DM Mono',monospace;font-size:0.8rem;"><strong>DM (kg) &divide; as-fed (kg)</strong></div>
+              </div>
+            </div>
+            <p style="font-size:0.78rem;color:#7a6e5f;font-style:italic;margin-top:8px;">DM% expressed as a decimal, e.g. 87% = 0.87</p>
+          </div>
+        </div>
+      </div>
+      <div class="q-row"><div class="q-label"><strong>Commercial pellet — kg DM required per day</strong><br>Use the pellet's percentage of the ration (from Step 6) and the mare's total daily DM intake (from Step 2).</div>
+        <div class="input-row"><input class="ans-input" id="m_pellet_kgdm" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg DM/day</span><button class="check-btn" onclick="checkNum('m_pellet_kgdm',5.08,0.2,'m_pellet_kgdm_fb','= 36.3% × 14.0 kg DM = 5.08 kg DM/day','mare',7)">Check</button></div>
+        <div class="feedback" id="m_pellet_kgdm_fb"></div></div>
+      <div class="q-row"><div class="q-label"><strong>Commercial pellet — kg as-fed per day</strong><br>Convert your kg DM figure to as-fed weight using the memory aid above and the pellet's % DM from the feed table.</div>
+        <div class="input-row"><input class="ans-input" id="m_pellet_af2" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg as-fed/day</span><button class="check-btn" onclick="checkNum('m_pellet_af2',5.46,0.2,'m_pellet_af2_fb','= 5.08 kg DM ÷ 0.93 = 5.46 kg as-fed/day','mare',7)">Check</button></div>
+        <div class="feedback" id="m_pellet_af2_fb"></div></div>
+      <hr class="section-divider">
+      <div class="q-row"><div class="q-label"><strong>Oaten chaff — kg DM required per day</strong><br>Use the chaff's percentage of the ration (from Step 6) and the mare's total daily DM intake.</div>
+        <div class="input-row"><input class="ans-input" id="m_chaff_kgdm" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg DM/day</span><button class="check-btn" onclick="checkNum('m_chaff_kgdm',8.92,0.2,'m_chaff_kgdm_fb','= 63.7% × 14.0 kg DM = 8.92 kg DM/day','mare',7)">Check</button></div>
+        <div class="feedback" id="m_chaff_kgdm_fb"></div></div>
+      <div class="q-row"><div class="q-label"><strong>Oaten chaff — kg as-fed per day</strong><br>Convert to as-fed weight using the chaff's % DM from the feed table.</div>
+        <div class="input-row"><input class="ans-input" id="m_chaff_af2" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg as-fed/day</span><button class="check-btn" onclick="checkNum('m_chaff_af2',10.25,0.3,'m_chaff_af2_fb','= 8.92 kg DM ÷ 0.87 = 10.25 kg as-fed/day','mare',7)">Check</button></div>
+        <div class="feedback" id="m_chaff_af2_fb"></div></div>
+      <button class="next-btn" id="mnext7" onclick="unlockMStep(8)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <!-- M8: Cost -->
+  <div class="step locked" id="mstep8">
+    <div class="step-header"><div class="step-num">8</div><div class="step-title">Calculate daily ration cost</div><div class="step-status" id="mstatus8">🔒</div></div>
+    <div class="step-body">
+      <div class="info-box">Use the as-fed quantities you calculated in Step 7, and the cost per kg as-fed figures you calculated in Step 1.</div>
+      <div class="q-row"><div class="q-label"><strong>Pellet</strong> daily cost: kg as-fed × $/kg as-fed</div>
+        <div class="input-row"><input class="ans-input" id="m_cost_pellet" type="number" step="0.01" placeholder="0.00"><span class="unit-label">$/day</span><button class="check-btn" onclick="checkNum('m_cost_pellet',8.19,0.3,'m_cost_pellet_fb','= 5.46×$1.50 = $8.19/day','mare',8)">Check</button></div>
+        <div class="feedback" id="m_cost_pellet_fb"></div></div>
+      <div class="q-row"><div class="q-label"><strong>Oaten chaff</strong> daily cost: kg as-fed × $/kg as-fed</div>
+        <div class="input-row"><input class="ans-input" id="m_cost_chaff" type="number" step="0.01" placeholder="0.00"><span class="unit-label">$/day</span><button class="check-btn" onclick="checkNum('m_cost_chaff',9.84,0.3,'m_cost_chaff_fb','= 10.25×$0.96 = $9.84/day','mare',8)">Check</button></div>
+        <div class="feedback" id="m_cost_chaff_fb"></div></div>
+      <div class="q-row"><div class="q-label"><strong>Total daily ration cost</strong>:</div>
+        <div class="input-row"><input class="ans-input" id="m_cost_total" type="number" step="0.01" placeholder="0.00"><span class="unit-label">$/day</span><button class="check-btn" onclick="checkNum('m_cost_total',18.03,0.6,'m_cost_total_fb','= $8.19+$9.84 = $18.03/day','mare',8)">Check</button></div>
+        <div class="feedback" id="m_cost_total_fb"></div></div>
+      <button class="next-btn" id="mnext8" onclick="finishMare()" disabled>Complete ✓</button>
+    </div>
+  </div>
+
+  <div class="completion-banner" id="mare-complete">
+    <div style="font-size:2.5rem;margin-bottom:10px">🐴</div>
+    <h2>Mare ration complete!</h2>
+    <p style="margin-top:10px;">Feed <strong>~5.5 kg pellet</strong> + <strong>~10.2 kg oaten chaff</strong> per day (fresh weight).<br>
+    Daily ration cost: approximately <strong>$18.03/day</strong>.</p>
+    <p style="margin-top:16px;font-size:0.8rem;opacity:0.7;font-family:'DM Mono',monospace;letter-spacing:0.05em;">Completion code: Q1-P6NWJJ</p>
+    <!-- Print section -->
+    <div class="no-print" style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.25);">
+      <p style="font-size:0.85rem;opacity:0.9;margin-bottom:10px;">Enter your name to generate a PDF record of your work:</p>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;">
+        <input id="mare_student_name" type="text" placeholder="Your full name"
+          style="padding:8px 14px;border-radius:6px;border:none;font-family:'DM Sans',sans-serif;
+                 font-size:0.95rem;width:240px;color:#2a2318;">
+        <button onclick="printQuestion('mare')"
+          style="padding:9px 20px;background:#c9a84c;color:#fff;border:none;border-radius:7px;
+                 font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;">
+          🖨️ Print / Save PDF
+        </button>
+      </div>
+      <p id="mare_name_err" style="font-size:0.8rem;color:#fde08a;margin-top:6px;min-height:18px;"></p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 3: STUD BULL
+═══════════════════════════════════════════════ -->
+<div class="tab-pane" id="pane-bull">
+<div class="progress-wrap"><div class="progress-bar" id="prog-bull"></div></div>
+<div class="container">
+
+  <div class="scenario">
+    <strong>Question 2:</strong> A farmer is preparing a <strong>500 kg stud bull</strong> for sale. He feeds oaten hay (grown on-farm), rice bran and whole cotton seed (WCS).
+    To grow at ~1.1 kg/day, the bull requires <strong>11 MJ ME/kg DM</strong> and <strong>14% CP</strong>.
+    <br><br>
+    <table class="feed-table">
+      <thead><tr><th>Feed</th><th>% DM</th><th>ME (MJ/kg DM)</th><th>CP (% DM)</th><th>Purchase price</th></tr></thead>
+      <tbody>
+        <tr><td>Oaten hay</td><td>85%</td><td>8</td><td>6%</td><td>8 c/kg (farm cost)</td></tr>
+        <tr><td>Rice bran</td><td>90%</td><td>9</td><td>14%</td><td>40 c/kg</td></tr>
+        <tr><td>Whole cotton seed</td><td>92%</td><td>15</td><td>22%</td><td>58 c/kg</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box" style="margin-bottom:20px;">
+    ⚡ <strong>Double Pearson Square approach:</strong> We have 3 feeds and 2 nutrient targets (ME and CP) — too complex for a single square.
+    We create two 'mixes' each balanced for ME, then combine them using a third square balanced for CP.
+  </div>
+
+  <!-- SQUARE 1 -->
+  <div class="sq-heading">Square 1 — Balance Mix 1 (Oaten Hay + WCS) for ME</div>
+
+  <div class="step active" id="bstep1">
+    <div class="step-header"><div class="step-num">1</div><div class="step-title">Set up Square 1: Oaten Hay vs Whole Cotton Seed for ME</div><div class="step-status" id="bstatus1">🔓</div></div>
+    <div class="step-body">
+      <div class="info-box">
+        We need one ingredient with ME <strong>above</strong> the target and one <strong>below</strong> it. It doesn't matter which sits top or bottom on the square.<br><br>
+        <strong>Target (Box A):</strong> 11 MJ ME/kg DM<br>
+        <strong>Oaten hay:</strong> 8 MJ ME — below the target<br>
+        <strong>Whole cotton seed (WCS):</strong> 15 MJ ME — above the target<br><br>
+        ✓ Check: 8 &lt; <strong>11</strong> &lt; 15 — the Pearson Square will work for Mix 1.
+      </div>
+      <div class="q-row"><div class="q-label">Which ingredient has an ME value <em>above</em> the target of 11 MJ ME/kg DM?</div>
+        <div class="input-row">
+          <select class="ans-input" id="b_sq1_B" style="width:210px;font-family:'DM Sans',sans-serif;">
+            <option value="">-- select --</option>
+            <option value="wcs">Whole cotton seed (15 MJ)</option>
+            <option value="hay">Oaten hay (8 MJ)</option>
+            <option value="rb">Rice bran (9 MJ)</option>
+          </select>
+          <button class="check-btn" onclick="checkSel('b_sq1_B','wcs','b_sq1_B_fb','Correct! WCS at 15 MJ ME is above the target of 11 MJ ME. Place it in whichever corner you prefer — it just needs to be paired correctly in the square.','Not quite. Which ingredient has ME above 11 MJ ME/kg DM?')">Check</button>
+        </div>
+        <div class="feedback" id="b_sq1_B_fb"></div></div>
+      <button class="next-btn" id="bnext1" onclick="unlockBStep(2)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <div class="step locked" id="bstep2">
+    <div class="step-header"><div class="step-num">2</div><div class="step-title">Fill in Square 1 — parts of each feed</div><div class="step-status" id="bstatus2">🔒</div></div>
+    <div class="step-body">
+      <div class="ps-outer">
+        <div class="ps-grid">
+          <div class="ps-left">
+            <div class="ps-ing"><div class="i-tag">Box B</div><div class="i-name">Whole Cotton Seed</div><input class="ps-box-input" id="b1_B_val" type="number" step="0.1" placeholder="ME value?"></div>
+            <div class="ps-ing"><div class="i-tag">Box C</div><div class="i-name">Oaten Hay</div><input class="ps-box-input" id="b1_C_val" type="number" step="0.1" placeholder="ME value?"></div>
+          </div>
+          <div class="ps-svg-wrap">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="192" height="192" fill="none" stroke="#5a8c72" stroke-width="2.5" rx="4"/>
+              <line x1="4" y1="4" x2="196" y2="196" stroke="#5a8c72" stroke-width="2"/>
+              <polygon points="196,196 182,188 188,182" fill="#5a8c72"/>
+              <line x1="4" y1="196" x2="196" y2="4" stroke="#5a8c72" stroke-width="2"/>
+              <polygon points="196,4 182,12 188,18" fill="#5a8c72"/>
+            </svg>
+            <div class="ps-center"><div class="c-tag">Box A — Target ME</div><input class="ps-box-input" id="b1_A_val" type="number" step="0.1" placeholder="?" style="font-size:1rem;font-weight:700;color:var(--accent);width:80px;margin:4px auto 0;"><div class="c-sub">MJ ME/kg DM</div></div>
+          </div>
+          <div class="ps-right">
+            <div class="ps-res"><div class="r-tag">Box D — WCS parts</div><input class="ps-box-input" id="b1_D" type="number" step="0.1" placeholder="?"></div>
+            <div class="ps-res ps-res-f"><div class="r-tag">Box F — Total parts</div><input class="ps-box-input" id="b1_F" type="number" step="0.1" placeholder="?"></div>
+            <div class="ps-res"><div class="r-tag">Box E — Hay parts</div><input class="ps-box-input" id="b1_E" type="number" step="0.1" placeholder="?"></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="check-btn" onclick="checkBullSquare1()">Check Square 1</button>
+        <button class="hint-toggle" onclick="toggleHint('b1_hint')">💡 Hint</button>
+      </div>
+      <div class="feedback hint" id="b1_hint" style="display:none;"><strong>Reminder:</strong> D = |A − C| &nbsp;|&nbsp; E = |B − A| &nbsp;|&nbsp; F = D + E<br>Subtract across the diagonal and make all results positive.</div>
+      <div class="feedback" id="b1_sq_fb"></div>
+      <button class="next-btn" id="bnext2" onclick="unlockBStep(3)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <div class="step locked" id="bstep3">
+    <div class="step-header"><div class="step-num">3</div><div class="step-title">Calculate Mix 1 composition and CP content</div><div class="step-status" id="bstatus3">🔒</div></div>
+    <div class="step-body">
+      <div class="info-box">
+        Mix 1 = WCS + Oaten Hay, balanced for 11 MJ ME/kg DM.<br><br>
+        Now convert the <em>parts</em> from Square 1 into <em>percentages</em> of Mix 1:
+        divide each ingredient's parts by the total parts (Box F), then multiply by 100.<br><br>
+        Once you have the percentages, calculate how much CP each ingredient contributes to Mix 1:
+        multiply each ingredient's <em>% of the mix</em> by its <em>CP content (%)</em>.
+        The total CP of Mix 1 = sum of both contributions.
+      </div>
+
+      <div class="q-row">
+        <div class="q-label"><strong>% of whole cotton seed in Mix 1</strong><br>
+        (parts of WCS ÷ total parts × 100)</div>
+        <div class="input-row"><input class="ans-input" id="b_wcs1_pct" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% of Mix 1</span>
+        <button class="check-btn" onclick="checkNumAndPopulate('b_wcs1_pct',42.9,1.5,'b_wcs1_pct_fb','= Parts of WCS ÷ Total parts × 100 = 42.9% WCS in Mix 1','bull',3,'b_wcs1_pct_show')">Check</button></div>
+        <div class="feedback" id="b_wcs1_pct_fb"></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label"><strong>% of oaten hay in Mix 1</strong><br>
+        (parts of oaten hay ÷ total parts × 100)</div>
+        <div class="input-row"><input class="ans-input" id="b_hay1_pct" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% of Mix 1</span>
+        <button class="check-btn" onclick="checkNumAndPopulate('b_hay1_pct',57.1,1.5,'b_hay1_pct_fb','= Parts of hay ÷ Total parts × 100 = 57.1% hay in Mix 1','bull',3,'b_hay1_pct_show')">Check</button></div>
+        <div class="feedback" id="b_hay1_pct_fb"></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label" style="margin-bottom:10px;"><strong>CP contribution of each ingredient to Mix 1</strong><br>
+        For each ingredient: (% of Mix 1 ÷ 100) × CP content of that ingredient = CP contribution (%)</div>
+        <table class="mix-table">
+          <thead><tr><th>Ingredient</th><th>% of Mix 1</th><th>CP content (% DM)</th><th>CP contribution to Mix 1</th></tr></thead>
+          <tbody>
+            <tr><td>Whole cotton seed</td><td id="b_wcs1_pct_show">—</td><td>22%</td><td><input class="ans-input" id="b_wcs1_cp_contrib" type="number" step="0.1" placeholder="?" style="width:90px;"> %</td></tr>
+            <tr><td>Oaten hay</td><td id="b_hay1_pct_show">—</td><td>6%</td><td><input class="ans-input" id="b_hay1_cp_contrib" type="number" step="0.1" placeholder="?" style="width:90px;"> %</td></tr>
+            <tr><td><strong>Total Mix 1</strong></td><td>100%</td><td>—</td><td><input class="ans-input" id="b_mix1_cp" type="number" step="0.1" placeholder="?" style="width:90px;"> <strong>% CP</strong></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;"><button class="check-btn" onclick="checkMix1CP()">Check CP table</button></div>
+        <div class="feedback" id="b_mix1_cp_fb"></div>
+      </div>
+
+      <div class="info-box" style="margin-top:12px;">📌 Mix 1 has <strong>11 MJ ME</strong> (balanced ✓) but its CP will be <em>below</em> the 14% target. That is expected — we will correct this when we combine the mixes in Square 3.</div>
+      <button class="next-btn" id="bnext3" onclick="unlockBStep(4)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <!-- SQUARE 2 -->
+  <div class="sq-heading">Square 2 — Balance Mix 2 (Rice Bran + WCS) for ME</div>
+
+  <div class="step locked" id="bstep4">
+    <div class="step-header"><div class="step-num">4</div><div class="step-title">Fill in Square 2 — Rice Bran vs WCS for ME</div><div class="step-status" id="bstatus4">🔒</div></div>
+    <div class="step-body">
+      <div class="info-box">Use the feed table to identify which ingredient has ME above the target and which is below. Enter all values into the square yourself.</div>
+      <div class="ps-outer">
+        <div class="ps-grid">
+          <div class="ps-left">
+            <div class="ps-ing"><div class="i-tag">Box B</div><div class="i-name">Whole Cotton Seed</div><input class="ps-box-input" id="b2_B_val" type="number" step="0.1" placeholder="ME value?"></div>
+            <div class="ps-ing"><div class="i-tag">Box C</div><div class="i-name">Rice Bran</div><input class="ps-box-input" id="b2_C_val" type="number" step="0.1" placeholder="ME value?"></div>
+          </div>
+          <div class="ps-svg-wrap">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="192" height="192" fill="none" stroke="#5a8c72" stroke-width="2.5" rx="4"/>
+              <line x1="4" y1="4" x2="196" y2="196" stroke="#5a8c72" stroke-width="2"/>
+              <polygon points="196,196 182,188 188,182" fill="#5a8c72"/>
+              <line x1="4" y1="196" x2="196" y2="4" stroke="#5a8c72" stroke-width="2"/>
+              <polygon points="196,4 182,12 188,18" fill="#5a8c72"/>
+            </svg>
+            <div class="ps-center"><div class="c-tag">Box A — Target ME</div><input class="ps-box-input" id="b2_A_val" type="number" step="0.1" placeholder="?" style="font-size:1rem;font-weight:700;color:var(--accent);width:80px;margin:4px auto 0;"><div class="c-sub">MJ ME/kg DM</div></div>
+          </div>
+          <div class="ps-right">
+            <div class="ps-res"><div class="r-tag">Box D — WCS parts</div><input class="ps-box-input" id="b2_D" type="number" step="0.1" placeholder="?"></div>
+            <div class="ps-res ps-res-f"><div class="r-tag">Box F — Total parts</div><input class="ps-box-input" id="b2_F" type="number" step="0.1" placeholder="?"></div>
+            <div class="ps-res"><div class="r-tag">Box E — Rice Bran parts</div><input class="ps-box-input" id="b2_E" type="number" step="0.1" placeholder="?"></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="check-btn" onclick="checkBullSquare2()">Check Square 2</button>
+        <button class="hint-toggle" onclick="toggleHint('b2_hint')">💡 Hint</button>
+      </div>
+      <div class="feedback hint" id="b2_hint" style="display:none;"><strong>Reminder:</strong> D = |A − C| &nbsp;|&nbsp; E = |B − A| &nbsp;|&nbsp; F = D + E<br>Subtract across the diagonal and make all results positive.</div>
+      <div class="feedback" id="b2_sq_fb"></div>
+      <button class="next-btn" id="bnext4" onclick="unlockBStep(5)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <div class="step locked" id="bstep5">
+    <div class="step-header"><div class="step-num">5</div><div class="step-title">Calculate Mix 2 composition and CP content</div><div class="step-status" id="bstatus5">🔒</div></div>
+    <div class="step-body">
+      <div class="info-box">
+        Mix 2 = WCS + Rice Bran, balanced for 11 MJ ME/kg DM.<br><br>
+        Use the same approach as Mix 1: convert parts to percentages, then calculate the CP contribution
+        of each ingredient to find the total CP of Mix 2.
+      </div>
+
+      <div class="q-row">
+        <div class="q-label"><strong>% of whole cotton seed in Mix 2</strong><br>
+        (parts of WCS ÷ total parts × 100)</div>
+        <div class="input-row"><input class="ans-input" id="b_wcs2_pct" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% of Mix 2</span>
+        <button class="check-btn" onclick="checkNumAndPopulate('b_wcs2_pct',33.3,1.5,'b_wcs2_pct_fb','= Parts of WCS ÷ Total parts × 100 = 33.3% WCS in Mix 2','bull',5,'b_wcs2_pct_show')">Check</button></div>
+        <div class="feedback" id="b_wcs2_pct_fb"></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label"><strong>% of rice bran in Mix 2</strong><br>
+        (parts of rice bran ÷ total parts × 100)</div>
+        <div class="input-row"><input class="ans-input" id="b_rb2_pct" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% of Mix 2</span>
+        <button class="check-btn" onclick="checkNumAndPopulate('b_rb2_pct',66.7,1.5,'b_rb2_pct_fb','= Parts of rice bran ÷ Total parts × 100 = 66.7% rice bran in Mix 2','bull',5,'b_rb2_pct_show')">Check</button></div>
+        <div class="feedback" id="b_rb2_pct_fb"></div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label" style="margin-bottom:10px;"><strong>CP contribution of each ingredient to Mix 2</strong><br>
+        For each ingredient: (% of Mix 2 ÷ 100) × CP content = CP contribution (%)</div>
+        <table class="mix-table">
+          <thead><tr><th>Ingredient</th><th>% of Mix 2</th><th>CP content (% DM)</th><th>CP contribution to Mix 2</th></tr></thead>
+          <tbody>
+            <tr><td>Whole cotton seed</td><td id="b_wcs2_pct_show">—</td><td>22%</td><td><input class="ans-input" id="b_wcs2_cp_contrib" type="number" step="0.1" placeholder="?" style="width:90px;"> %</td></tr>
+            <tr><td>Rice bran</td><td id="b_rb2_pct_show">—</td><td>14%</td><td><input class="ans-input" id="b_rb2_cp_contrib" type="number" step="0.1" placeholder="?" style="width:90px;"> %</td></tr>
+            <tr><td><strong>Total Mix 2</strong></td><td>100%</td><td>—</td><td><input class="ans-input" id="b_mix2_cp" type="number" step="0.1" placeholder="?" style="width:90px;"> <strong>% CP</strong></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;"><button class="check-btn" onclick="checkMix2CP()">Check CP table</button></div>
+        <div class="feedback" id="b_mix2_cp_fb"></div>
+      </div>
+
+      <div class="info-box" style="margin-top:12px;">📌 Mix 2 has <strong>11 MJ ME</strong> (balanced ✓). Its CP will be <em>above</em> the 14% target.<br>
+        Mix 1 CP is below 14%, Mix 2 CP is above 14% — so we can now use a third Pearson Square to balance them for CP.</div>
+      <button class="next-btn" id="bnext5" onclick="unlockBStep(6)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <!-- SQUARE 3 -->
+  <div class="sq-heading">Square 3 — Combine Mix 1 and Mix 2 to hit 14% CP</div>
+
+  <div class="step locked" id="bstep6">
+    <div class="step-header"><div class="step-num">6</div><div class="step-title">Fill in Square 3 — balance Mix 1 vs Mix 2 for CP</div><div class="step-status" id="bstatus6">🔒</div></div>
+    <div class="step-body">
+      <div class="info-box">Use the CP totals from your Mix 1 and Mix 2 tables (Steps 3 and 5) as your two ingredients, and the bull's CP requirement as Box A. Check that the target sits between the two mix CP values.</div>
+      <div class="ps-outer">
+        <div class="ps-grid">
+          <div class="ps-left">
+            <div class="ps-ing"><div class="i-tag">Box B</div><div class="i-name">Mix 2</div><input class="ps-box-input" id="b3_B_val" type="number" step="0.1" placeholder="CP% of Mix 2?"></div>
+            <div class="ps-ing"><div class="i-tag">Box C</div><div class="i-name">Mix 1</div><input class="ps-box-input" id="b3_C_val" type="number" step="0.1" placeholder="CP% of Mix 1?"></div>
+          </div>
+          <div class="ps-svg-wrap">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="192" height="192" fill="none" stroke="#5a8c72" stroke-width="2.5" rx="4"/>
+              <line x1="4" y1="4" x2="196" y2="196" stroke="#5a8c72" stroke-width="2"/>
+              <polygon points="196,196 182,188 188,182" fill="#5a8c72"/>
+              <line x1="4" y1="196" x2="196" y2="4" stroke="#5a8c72" stroke-width="2"/>
+              <polygon points="196,4 182,12 188,18" fill="#5a8c72"/>
+            </svg>
+            <div class="ps-center"><div class="c-tag">Box A — Target CP%</div><input class="ps-box-input" id="b3_A_val" type="number" step="0.1" placeholder="?" style="font-size:1rem;font-weight:700;color:var(--accent);width:80px;margin:4px auto 0;"><div class="c-sub">% CP required</div></div>
+          </div>
+          <div class="ps-right">
+            <div class="ps-res"><div class="r-tag">Box D — Mix 2 parts</div><input class="ps-box-input" id="b3_D" type="number" step="0.1" placeholder="?"></div>
+            <div class="ps-res ps-res-f"><div class="r-tag">Box F — Total parts</div><input class="ps-box-input" id="b3_F" type="number" step="0.1" placeholder="?"></div>
+            <div class="ps-res"><div class="r-tag">Box E — Mix 1 parts</div><input class="ps-box-input" id="b3_E" type="number" step="0.1" placeholder="?"></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="check-btn" onclick="checkBullSquare3()">Check Square 3</button>
+        <button class="hint-toggle" onclick="toggleHint('b3_hint')">💡 Hint</button>
+      </div>
+      <div class="feedback hint" id="b3_hint" style="display:none;"><strong>Reminder:</strong> D = |A − C| &nbsp;|&nbsp; E = |B − A| &nbsp;|&nbsp; F = D + E<br>Subtract across the diagonal and make all results positive.</div>
+      <div class="feedback" id="b3_sq_fb"></div>
+      <button class="next-btn" id="bnext6" onclick="unlockBStep(7)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <div class="step locked" id="bstep7">
+    <div class="step-header"><div class="step-num">7</div><div class="step-title">Calculate final % of each mix in the ration</div><div class="step-status" id="bstatus7">🔒</div></div>
+    <div class="step-body">
+      <div class="q-row"><div class="q-label"><strong>% Mix 1</strong> in final ration<br>(parts of Mix 1 ÷ total parts × 100)</div>
+        <div class="input-row"><input class="ans-input" id="b_mix1_pct" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkNum('b_mix1_pct',67.6,1.5,'b_mix1_pct_fb','= 2.5÷3.7×100 = 67.6% Mix 1','bull',7)">Check</button></div>
+        <div class="feedback" id="b_mix1_pct_fb"></div></div>
+      <div class="q-row"><div class="q-label"><strong>% Mix 2</strong> in final ration<br>(parts of Mix 2 ÷ total parts × 100)</div>
+        <div class="input-row"><input class="ans-input" id="b_mix2_pct" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkNum('b_mix2_pct',32.4,1.5,'b_mix2_pct_fb','= 1.2÷3.7×100 = 32.4% Mix 2','bull',7)">Check</button></div>
+        <div class="feedback" id="b_mix2_pct_fb"></div></div>
+      <button class="next-btn" id="bnext7" onclick="unlockBStep(8)" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <div class="step locked" id="bstep8">
+    <div class="step-header"><div class="step-num">8</div><div class="step-title">Calculate each ingredient's inclusion in the final ration</div><div class="step-status" id="bstatus8">🔒</div></div>
+    <div class="step-body">
+      <div class="info-box">% ingredient in final ration = (% in its mix) × (% of that mix in final ration).<br>WCS appears in both mixes — add the two contributions together.</div>
+      <div class="q-row"><div class="q-label"><strong>Oaten Hay</strong> — only appears in Mix 1.<br>% in final ration = (% hay in Mix 1) × (% Mix 1 in final ration)</div>
+        <div class="input-row"><input class="ans-input" id="b_hay_final" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% final ration</span><button class="check-btn" onclick="checkNum('b_hay_final',38.6,1.5,'b_hay_final_fb','= 0.571×0.676×100 = 38.6%','bull',8)">Check</button></div>
+        <div class="feedback" id="b_hay_final_fb"></div></div>
+      <div class="q-row"><div class="q-label"><strong>Rice Bran</strong> — only appears in Mix 2.<br>% in final ration = (% rice bran in Mix 2) × (% Mix 2 in final ration)</div>
+        <div class="input-row"><input class="ans-input" id="b_rb_final" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% final ration</span><button class="check-btn" onclick="checkNum('b_rb_final',21.6,1.5,'b_rb_final_fb','= 0.667×0.324×100 = 21.6%','bull',8)">Check</button></div>
+        <div class="feedback" id="b_rb_final_fb"></div></div>
+      <div class="q-row"><div class="q-label"><strong>WCS contribution from Mix 1</strong><br>= (% WCS in Mix 1) × (% Mix 1 in final ration)</div>
+        <div class="input-row"><input class="ans-input" id="b_wcs_m1" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkNum('b_wcs_m1',29.0,1.5,'b_wcs_m1_fb','= 0.429×0.676×100 = 29.0%','bull',8)">Check</button></div>
+        <div class="feedback" id="b_wcs_m1_fb"></div></div>
+      <div class="q-row"><div class="q-label"><strong>WCS contribution from Mix 2</strong><br>= (% WCS in Mix 2) × (% Mix 2 in final ration)</div>
+        <div class="input-row"><input class="ans-input" id="b_wcs_m2" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkNum('b_wcs_m2',10.8,1.5,'b_wcs_m2_fb','= 0.333×0.324×100 = 10.8%','bull',8)">Check</button></div>
+        <div class="feedback" id="b_wcs_m2_fb"></div></div>
+      <div class="q-row"><div class="q-label"><strong>Total WCS in final ration</strong><br>= WCS from Mix 1 + WCS from Mix 2</div>
+        <div class="input-row"><input class="ans-input" id="b_wcs_total" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% final ration</span><button class="check-btn" onclick="checkNum('b_wcs_total',39.8,2.0,'b_wcs_total_fb','= 29.0+10.8 = 39.8% WCS (≈ 39.76% in answer key)','bull',8)">Check</button></div>
+        <div class="feedback" id="b_wcs_total_fb"></div></div>
+      <!-- Diet summary table -->
+      <div id="b_diet_summary" style="display:block;margin-top:20px;">
+        <div style="font-family:'Lora',serif;font-size:1rem;font-weight:600;color:var(--accent);margin-bottom:10px;">✅ Final ration composition — does it add up?</div>
+        <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;min-width:560px;">
+          <thead>
+            <tr style="background:var(--accent);color:#fff;">
+              <th style="padding:8px 12px;text-align:left;font-family:'DM Sans',sans-serif;font-weight:600;">Ingredient</th>
+              <th style="padding:8px 12px;text-align:right;font-family:'DM Sans',sans-serif;font-weight:600;">% of ration (DM)</th>
+              <th style="padding:8px 12px;text-align:right;font-family:'DM Sans',sans-serif;font-weight:600;">CP (% DM)</th>
+              <th style="padding:8px 12px;text-align:right;font-family:'DM Sans',sans-serif;font-weight:600;">CP contribution</th>
+              <th style="padding:8px 12px;text-align:right;font-family:'DM Sans',sans-serif;font-weight:600;">ME (MJ/kg DM)</th>
+              <th style="padding:8px 12px;text-align:right;font-family:'DM Sans',sans-serif;font-weight:600;">ME contribution</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px 12px;">Oaten Hay</td>
+              <td id="sum_hay_pct" style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;color:var(--accent2);">—</td>
+              <td style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">6%</td>
+              <td id="sum_hay_cp" style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">—</td>
+              <td style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">8.0</td>
+              <td id="sum_hay_me" style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">—</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);background:rgba(0,0,0,0.02);">
+              <td style="padding:8px 12px;">Rice Bran</td>
+              <td id="sum_rb_pct" style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;color:var(--accent2);">—</td>
+              <td style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">14%</td>
+              <td id="sum_rb_cp" style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">—</td>
+              <td style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">9.0</td>
+              <td id="sum_rb_me" style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">—</td>
+            </tr>
+            <tr style="border-bottom:2px solid var(--accent);">
+              <td style="padding:8px 12px;">Whole Cotton Seed</td>
+              <td id="sum_wcs_pct" style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;color:var(--accent2);">—</td>
+              <td style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">22%</td>
+              <td id="sum_wcs_cp" style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">—</td>
+              <td style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">15.0</td>
+              <td id="sum_wcs_me" style="padding:8px 12px;text-align:right;font-family:'DM Mono',monospace;">—</td>
+            </tr>
+            <tr style="background:var(--accent-light);">
+              <td style="padding:9px 12px;font-weight:600;font-family:'DM Sans',sans-serif;">Total</td>
+              <td id="sum_total_pct" style="padding:9px 12px;text-align:right;font-family:'DM Mono',monospace;font-weight:700;">—</td>
+              <td style="padding:9px 12px;text-align:right;color:var(--muted);">—</td>
+              <td id="sum_total_cp" style="padding:9px 12px;text-align:right;font-family:'DM Mono',monospace;font-weight:700;">—</td>
+              <td style="padding:9px 12px;text-align:right;color:var(--muted);">—</td>
+              <td id="sum_total_me" style="padding:9px 12px;text-align:right;font-family:'DM Mono',monospace;font-weight:700;">—</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <div id="sum_targets" style="margin-top:10px;font-size:0.84rem;line-height:1.8;padding:10px 14px;background:var(--correct-light);border-left:4px solid var(--correct);border-radius:0 6px 6px 0;color:var(--correct);display:none;"></div>
+      </div>
+
+
+      <button class="next-btn" id="bnext8" onclick="showBullSummaryAndUnlock()" disabled>Next step →</button>
+    </div>
+  </div>
+
+  <div class="step locked" id="bstep9">
+    <div class="step-header"><div class="step-num">9</div><div class="step-title">Convert to fresh weight and calculate daily cost</div><div class="step-status" id="bstatus9">🔒</div></div>
+    <div class="step-body">
+      <!-- Memory aid -->
+      <div style="background:#f0f6f2;border:1.5px solid #5a8c72;border-radius:8px;padding:14px 18px;margin-top:14px;margin-bottom:4px;">
+        <div style="font-size:0.85rem;font-weight:600;color:#3d6b4f;margin-bottom:10px;">📐 Memory aid — converting kg DM ↔ kg as-fed</div>
+        <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;">
+          <div style="flex-shrink:0;">
+            <svg width="140" height="120" viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+              <polygon points="70,6 134,110 6,110" fill="#e8f4ee" stroke="#3d6b4f" stroke-width="2.5" stroke-linejoin="round"/>
+              <line x1="38" y1="68" x2="102" y2="68" stroke="#3d6b4f" stroke-width="2"/>
+              <text x="70" y="58" text-anchor="middle" font-family="DM Mono, monospace" font-size="15" font-weight="700" fill="#2d6a4f">DM</text>
+              <text x="44" y="97" text-anchor="middle" font-family="DM Mono, monospace" font-size="13" font-weight="700" fill="#8b4513">AF</text>
+              <text x="70" y="92" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" fill="#5a4e40">×</text>
+              <text x="98" y="97" text-anchor="middle" font-family="DM Mono, monospace" font-size="12" font-weight="700" fill="#8b4513">DM%</text>
+              <text x="10" y="20" font-family="DM Sans, sans-serif" font-size="9" fill="#7a6e5f">cover</text>
+              <text x="10" y="30" font-family="DM Sans, sans-serif" font-size="9" fill="#7a6e5f">what you</text>
+              <text x="10" y="40" font-family="DM Sans, sans-serif" font-size="9" fill="#7a6e5f">want</text>
+            </svg>
+          </div>
+          <div style="flex:1;min-width:200px;">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="background:#fff;border:1px solid #b0d4be;border-radius:6px;padding:7px 12px;font-size:0.81rem;line-height:1.6;">
+                <div style="color:#7a6e5f;font-family:'DM Sans',sans-serif;margin-bottom:2px;">Want <strong style="color:#2d6a4f;">DM (kg)</strong>?</div>
+                <div style="font-family:'DM Mono',monospace;font-size:0.8rem;"><strong>as-fed (kg) &times; DM% (as decimal)</strong></div>
+              </div>
+              <div style="background:#fff;border:1px solid #b0d4be;border-radius:6px;padding:7px 12px;font-size:0.81rem;line-height:1.6;">
+                <div style="color:#7a6e5f;font-family:'DM Sans',sans-serif;margin-bottom:2px;">Want <strong style="color:#8b4513;">as-fed (kg)</strong>?</div>
+                <div style="font-family:'DM Mono',monospace;font-size:0.8rem;"><strong>DM (kg) &divide; DM% (as decimal)</strong></div>
+              </div>
+            </div>
+            <p style="font-size:0.78rem;color:#7a6e5f;font-style:italic;margin-top:8px;">DM% as a decimal: e.g. 85% = 0.85</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feed table reference -->
+      <details style="margin-top:14px;margin-bottom:4px;">
+        <summary style="font-family:'DM Sans',sans-serif;font-size:0.87rem;font-weight:600;color:var(--accent2);cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:6px;">
+          <span style="font-size:0.75rem;">▶</span>
+          <span>📋 Show feed table &amp; purchase prices</span>
+        </summary>
+        <div style="margin-top:10px;">
+          <table class="feed-table">
+            <thead><tr><th>Feed</th><th>% DM</th><th>ME (MJ/kg DM)</th><th>CP (% DM)</th><th>Purchase price</th></tr></thead>
+            <tbody>
+              <tr><td>Oaten hay</td><td>85%</td><td>8</td><td>6%</td><td>8 c/kg (farm cost)</td></tr>
+              <tr><td>Rice bran</td><td>90%</td><td>9</td><td>14%</td><td>40 c/kg</td></tr>
+              <tr><td>Whole cotton seed</td><td>92%</td><td>15</td><td>22%</td><td>58 c/kg</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <!-- DM intake question -->
+      <div class="q-row"><div class="q-label"><strong>What is the bull's daily DM intake?</strong><br>
+        Use his liveweight and the assumed DM intake rate from the scenario.</div>
+        <div class="input-row"><input class="ans-input" id="b_dmi" type="number" step="0.1" placeholder="0.0"><span class="unit-label">kg DM/day</span>
+        <button class="check-btn" onclick="checkNum('b_dmi',12.5,0.2,'b_dmi_fb','= 500 kg × 2.5% = 12.5 kg DM/day','bull',9)">Check</button></div>
+        <div class="feedback" id="b_dmi_fb"></div></div>
+
+      <hr class="section-divider">
+
+      <div class="info-box">Use your daily DM intake and the final ingredient percentages from Step 8 to calculate kg DM per feed, then convert to as-fed weight using each feed's % DM from the feed table.</div>
+
+      <div class="q-row"><div class="q-label"><strong>Oaten hay</strong> — kg as-fed per day<br>
+        (% inclusion × daily DM intake) ÷ % DM of hay</div>
+        <div class="input-row"><input class="ans-input" id="b_hay_af" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg as-fed/day</span><button class="check-btn" onclick="checkNum('b_hay_af',5.68,0.3,'b_hay_af_fb','= (38.6% × 12.5 kg DM) ÷ 0.85 = 5.68 kg/day','bull',9)">Check</button></div>
+        <div class="feedback" id="b_hay_af_fb"></div></div>
+
+      <div class="q-row"><div class="q-label"><strong>Rice bran</strong> — kg as-fed per day</div>
+        <div class="input-row"><input class="ans-input" id="b_rb_af" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg as-fed/day</span><button class="check-btn" onclick="checkNum('b_rb_af',3.0,0.3,'b_rb_af_fb','= (21.6% × 12.5 kg DM) ÷ 0.90 = 3.0 kg/day','bull',9)">Check</button></div>
+        <div class="feedback" id="b_rb_af_fb"></div></div>
+
+      <div class="q-row"><div class="q-label"><strong>Whole cotton seed</strong> — kg as-fed per day</div>
+        <div class="input-row"><input class="ans-input" id="b_wcs_af" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg as-fed/day</span><button class="check-btn" onclick="checkNum('b_wcs_af',5.41,0.3,'b_wcs_af_fb','= (39.8% × 12.5 kg DM) ÷ 0.92 = 5.41 kg/day','bull',9)">Check</button></div>
+        <div class="feedback" id="b_wcs_af_fb"></div></div>
+
+      <hr class="section-divider">
+
+      <div class="q-row"><div class="q-label"><strong>Calculate the daily ration cost</strong><br>
+        Multiply the as-fed weight of each feed by its purchase price from the scenario, then sum all three.</div>
+        <div class="input-row"><input class="ans-input" id="b_cost" type="number" step="0.01" placeholder="0.00"><span class="unit-label">$/day</span><button class="check-btn" onclick="checkNum('b_cost',4.79,0.4,'b_cost_fb','= $0.45 + $1.20 + $3.14 = $4.79/day','bull',9)">Check</button></div>
+        <div class="feedback" id="b_cost_fb"></div></div>
+
+      <button class="next-btn" id="bnext9" onclick="finishBull()" disabled>Complete ✓</button>
+    </div>
+  </div>
+
+  <div class="completion-banner" id="bull-complete">
+    <div style="font-size:2.5rem;margin-bottom:10px">🐂</div>
+    <h2>Stud Bull ration complete!</h2>
+    <p style="margin-top:10px;">
+      <strong>~5.7 kg oaten hay</strong> + <strong>~3.0 kg rice bran</strong> + <strong>~5.4 kg WCS</strong> per day (fresh weight).<br>
+      Both nutrient targets met: 11 MJ ME/kg DM and 14% CP.<br>
+      Daily ration cost: approximately <strong>$4.79/day</strong>.
+    </p>
+    <p style="margin-top:16px;font-size:0.8rem;opacity:0.7;font-family:'DM Mono',monospace;letter-spacing:0.05em;">Completion code: Q2-9YFDNJ</p>
+    <!-- Print section -->
+    <div class="no-print" style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.25);">
+      <p style="font-size:0.85rem;opacity:0.9;margin-bottom:10px;">Enter your name to generate a PDF record of your work:</p>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;">
+        <input id="bull_student_name" type="text" placeholder="Your full name"
+          style="padding:8px 14px;border-radius:6px;border:none;font-family:'DM Sans',sans-serif;
+                 font-size:0.95rem;width:240px;color:#2a2318;">
+        <button onclick="printQuestion('bull')"
+          style="padding:9px 20px;background:#c9a84c;color:#fff;border:none;border-radius:7px;
+                 font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;">
+          🖨️ Print / Save PDF
+        </button>
+      </div>
+      <p id="bull_name_err" style="font-size:0.8rem;color:#fde08a;margin-top:6px;min-height:18px;"></p>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 4: FREE ENTRY
+═══════════════════════════════════════════════ -->
+<div class="tab-pane" id="pane-free">
+<div class="container">
+  <div class="free-section">
+    <div class="free-header">
+      <h3>✏️ Enter Your Own Values</h3>
+      <p style="font-size:.84rem;opacity:.9;margin-top:3px;">Fill in any two ingredients and a target — the checker calculates correct D, E, F from your inputs.</p>
+    </div>
+    <div class="free-body">
+      <div class="free-scenario">
+        Enter <strong>Box B</strong> (high nutrient value), <strong>Box C</strong> (low nutrient value), and <strong>Box A</strong> (your target — must be between B and C).
+        Then fill in D, E and F and check your answer.
+      </div>
+
+      <div style="display:grid;grid-template-columns:155px 1fr 190px;align-items:stretch;gap:0;max-width:640px;margin:0 auto;">
+        <div style="display:flex;flex-direction:column;justify-content:space-between;padding-right:10px;padding-top:12px;padding-bottom:12px;gap:12px;">
+          <div class="ps-ing" style="display:flex;flex-direction:column;gap:5px;">
+            <div class="i-tag">Box B · Above target</div>
+            <input class="ps-box-input" id="free_label_B" type="text" placeholder="Ingredient name" style="font-family:'DM Sans',sans-serif;font-size:.8rem;text-align:left;padding:5px 8px;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <input class="ps-box-input" id="free_B" type="number" step="0.1" placeholder="Value" style="width:70px;">
+              <span style="font-size:.73rem;color:var(--muted);">units</span>
+            </div>
+          </div>
+          <div class="ps-ing" style="display:flex;flex-direction:column;gap:5px;">
+            <div class="i-tag">Box C · Below target</div>
+            <input class="ps-box-input" id="free_label_C" type="text" placeholder="Ingredient name" style="font-family:'DM Sans',sans-serif;font-size:.8rem;text-align:left;padding:5px 8px;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <input class="ps-box-input" id="free_C" type="number" step="0.1" placeholder="Value" style="width:70px;">
+              <span style="font-size:.73rem;color:var(--muted);">units</span>
+            </div>
+          </div>
+        </div>
+        <div style="position:relative;min-height:220px;">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;position:absolute;top:0;left:0;">
+            <rect x="4" y="4" width="192" height="192" fill="none" stroke="#5a8c72" stroke-width="2.5" rx="4"/>
+            <line x1="4" y1="4" x2="196" y2="196" stroke="#5a8c72" stroke-width="2"/>
+            <polygon points="196,196 182,188 188,182" fill="#5a8c72"/>
+            <line x1="4" y1="196" x2="196" y2="4" stroke="#5a8c72" stroke-width="2"/>
+            <polygon points="196,4 182,12 188,18" fill="#5a8c72"/>
+          </svg>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:2.5px solid var(--accent);border-radius:8px;padding:9px 12px;text-align:center;min-width:108px;box-shadow:0 2px 12px rgba(61,107,79,0.14);z-index:2;">
+            <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);margin-bottom:4px;">Box A · Required</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:3px;">
+              <input class="ps-box-input" id="free_A" type="number" step="0.1" placeholder="?" style="width:62px;font-size:.95rem;font-weight:700;color:var(--accent);">
+            </div>
+            <div style="font-size:.67rem;color:var(--muted);margin-top:3px;font-style:italic;">must be between B &amp; C</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:space-around;padding-left:10px;gap:8px;padding-top:12px;padding-bottom:12px;">
+          <div class="ps-res"><div class="r-tag">Box D — High ingr. parts</div><div class="r-eq">= |A − C|</div><input class="ps-box-input" id="free_D" type="number" step="0.1" placeholder="?"></div>
+          <div class="ps-res ps-res-f"><div class="r-tag">Box F — Total parts</div><div class="r-eq">= D + E</div><input class="ps-box-input" id="free_F" type="number" step="0.1" placeholder="?"></div>
+          <div class="ps-res"><div class="r-tag">Box E — Low ingr. parts</div><div class="r-eq">= |B − A|</div><input class="ps-box-input" id="free_E" type="number" step="0.1" placeholder="?"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <button class="check-btn" onclick="checkFree()">Check answers</button>
+        <button class="hint-toggle" onclick="showFreeHint()">💡 Show working</button>
+        <button class="hint-toggle" onclick="resetFree()" style="border-color:var(--muted);color:var(--muted);">↺ Reset</button>
+      </div>
+      <div class="feedback hint" id="free_hint" style="display:none;margin-top:8px;"></div>
+      <div class="feedback" id="free_fb" style="margin-top:8px;"></div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TEACH MODAL
+═══════════════════════════════════════════════ -->
+<div id="teachOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;">
+  <div style="background:#fffdf8;border-radius:12px;padding:30px 34px;max-width:340px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.25);text-align:center;">
+    <div style="font-size:2rem;margin-bottom:8px;">🔐</div>
+    <h3 style="font-family:'Lora',serif;font-size:1.1rem;margin-bottom:6px;">Teaching Mode</h3>
+    <p style="font-size:.86rem;color:#7a6e5f;margin-bottom:18px;line-height:1.5;">Unlocks all steps in the current tab so you can walk through answers with students.</p>
+    <input id="teachPw" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')doTeach()"
+      style="width:100%;padding:9px 12px;border:2px solid #d4c9b0;border-radius:7px;font-size:1rem;font-family:'DM Mono',monospace;text-align:center;background:#f5f0e8;margin-bottom:8px;">
+    <div id="teachErr" style="color:#b54a2a;font-size:.82rem;min-height:18px;margin-bottom:8px;"></div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button onclick="closeTeach()" style="padding:8px 18px;background:#f5f0e8;border:1.5px solid #d4c9b0;border-radius:7px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;color:#7a6e5f;">Cancel</button>
+      <button onclick="doTeach()" style="padding:8px 18px;background:#3d6b4f;color:#fff;border:none;border-radius:7px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// WORKED EXAMPLE REVEAL
+// ═══════════════════════════════════════════
+let wRevealStep = 1; // step 1 already visible
+function revealWorkedStep() {
+  wRevealStep++;
+  const el = document.getElementById('w-step' + wRevealStep);
+  if (el) {
+    el.style.display = 'block';
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  if (wRevealStep >= 4) {
+    document.getElementById('w-reveal-btn').style.display = 'none';
+  }
+}
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+const stepChecks = {
+  worked: {},
+  mare: {
+    1: { req: ['m_chaff_af','m_chaff_dm','m_pellet_af','m_pellet_dm'], done: new Set() },
+    2: { req: ['m_dmi'], done: new Set() },
+    3: { req: ['m_de_req','m_de_meets'], done: new Set() },
+    4: { req: ['m_cp_req','m_cp_between'], done: new Set() },
+    5: { req: ['m_sq'], done: new Set() },  // m_A checked inside checkMareSquare
+    6: { req: ['m_pct_pellet','m_pct_chaff'], done: new Set() },
+    7: { req: ['m_pellet_kgdm','m_pellet_af2','m_chaff_kgdm','m_chaff_af2'], done: new Set() },
+    8: { req: ['m_cost_pellet','m_cost_chaff','m_cost_total'], done: new Set() }
+  },
+  bull: {
+    1: { req: ['b_sq1_B_ok'], done: new Set() },
+    2: { req: ['b1_sq'], done: new Set() },
+    3: { req: ['b_wcs1_pct','b_hay1_pct','b_mix1_cp_ok'], done: new Set() },
+    4: { req: ['b2_sq'], done: new Set() },
+    5: { req: ['b_wcs2_pct','b_rb2_pct','b_mix2_cp_ok'], done: new Set() },
+    6: { req: ['b3_sq'], done: new Set() },
+    7: { req: ['b_mix1_pct','b_mix2_pct'], done: new Set() },
+    8: { req: ['b_hay_final','b_rb_final','b_wcs_m1','b_wcs_m2','b_wcs_total'], done: new Set() },
+    9: { req: ['b_dmi','b_hay_af','b_rb_af','b_wcs_af','b_cost'], done: new Set() }
+  }
+};
+
+const tabProgress = { worked:0, mare:0, bull:0 };
+const tabTotals   = { worked:0, mare:8, bull:9 };
+
+function updateProg(tab) {
+  const pct = Math.round((tabProgress[tab] / tabTotals[tab]) * 100);
+  const el = document.getElementById('prog-' + tab);
+  if (el) el.style.width = pct + '%';
+}
+
+function markDone(key, tab, step) {
+  if (!tab || !step) return;
+  const sc = stepChecks[tab][step];
+  if (!sc) return;
+  sc.done.add(key);
+  const allDone = sc.req.every(r => sc.done.has(r));
+  if (allDone) {
+    const btn = document.getElementById(
+      tab==='worked' ? 'wnext'+step : tab==='mare' ? 'mnext'+step : 'bnext'+step
+    );
+    if (btn) btn.disabled = false;
+  }
+}
+
+// ═══════════════════════════════════════════
+// GENERIC CHECKERS
+// ═══════════════════════════════════════════
+function checkNum(id, correct, tol, fbId, expl, tab, step) {
+  const inp = document.getElementById(id);
+  const fb  = document.getElementById(fbId);
+  const val = parseFloat(inp.value);
+  if (isNaN(val)) { showFb(fb,'err','Please enter a number.'); return; }
+  if (Math.abs(val - correct) <= tol) {
+    inp.classList.remove('wrong'); inp.classList.add('correct'); inp.disabled = true;
+    showFb(fb,'ok','✓ Correct! ' + expl);
+    markDone(id, tab, step);
+  } else {
+    inp.classList.remove('correct'); inp.classList.add('wrong');
+    inp.classList.add('shake'); setTimeout(()=>inp.classList.remove('shake'),400);
+    showFb(fb,'err','✗ Not quite — check your calculation and try again.');
+  }
+}
+
+function checkSel(id, correct, fbId, okMsg, errMsg) {
+  const sel = document.getElementById(id);
+  const fb  = document.getElementById(fbId);
+  if (!sel.value) { showFb(fb,'err','Please make a selection.'); return; }
+  if (sel.value === correct) {
+    sel.disabled = true; showFb(fb,'ok','✓ ' + okMsg);
+    // derive tab/step from fbId
+    const key = id + '_ok';
+    // brute-force find which tab/step owns this select
+    for (const [tab, steps] of Object.entries(stepChecks)) {
+      for (const [step, sc] of Object.entries(steps)) {
+        if (sc.req.includes(key) || sc.req.includes(id)) {
+          markDone(sc.req.includes(key) ? key : id, tab, parseInt(step));
+        }
+      }
+    }
+  } else {
+    showFb(fb,'err','✗ ' + errMsg);
+  }
+}
+
+function showFb(el, type, msg) {
+  el.className = 'feedback show ' + type;
+  el.innerHTML = msg;
+}
+
+function toggleHint(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// ═══════════════════════════════════════════
+// PEARSON SQUARE CHECKERS
+// ═══════════════════════════════════════════
+function checkMix1CP() {
+  // First update table display with entered %s
+  const wPct = parseFloat(document.getElementById('b_wcs1_pct').value);
+  const hPct = parseFloat(document.getElementById('b_hay1_pct').value);
+  if (!isNaN(wPct)) document.getElementById('b_wcs1_pct_show').textContent = wPct.toFixed(1) + '%';
+  if (!isNaN(hPct)) document.getElementById('b_hay1_pct_show').textContent = hPct.toFixed(1) + '%';
+
+  const wContrib = parseFloat(document.getElementById('b_wcs1_cp_contrib').value);
+  const hContrib = parseFloat(document.getElementById('b_hay1_cp_contrib').value);
+  const total    = parseFloat(document.getElementById('b_mix1_cp').value);
+  const fb = document.getElementById('b_mix1_cp_fb');
+
+  if (isNaN(wPct) || isNaN(hPct)) { showFb(fb,'err','✗ Enter % of WCS and % of hay in Mix 1 first.'); return; }
+  if (isNaN(wContrib)||isNaN(hContrib)||isNaN(total)) { showFb(fb,'err','✗ Fill in all three rows of the table.'); return; }
+
+  const expWC = wPct/100 * 22;
+  const expHC = hPct/100 * 6;
+  const expTotal = expWC + expHC;
+  const tol = 0.4;
+
+  const wcOk = Math.abs(wContrib - expWC) <= tol;
+  const hcOk = Math.abs(hContrib - expHC) <= tol;
+  const totOk = Math.abs(total - expTotal) <= tol;
+
+  function mf(id,ok){const el=document.getElementById(id);el.classList.remove('correct','wrong');el.classList.add(ok?'correct':'wrong');if(!ok){el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),400);}}
+  mf('b_wcs1_cp_contrib',wcOk); mf('b_hay1_cp_contrib',hcOk); mf('b_mix1_cp',totOk);
+
+  if (wcOk&&hcOk&&totOk) {
+    showFb(fb,'ok','✓ Correct! Mix 1 CP = '+expTotal.toFixed(1)+'% — this is the CP content of Mix 1 (balanced for ME but not yet for CP).');
+    markDone('b_mix1_cp_ok','bull',3);
+  } else {
+    let msg = '✗ ';
+    if (!wcOk) msg += 'WCS contribution: ('+wPct.toFixed(1)+'% ÷ 100) × 22% CP. ';
+    if (!hcOk) msg += 'Hay contribution: ('+hPct.toFixed(1)+'% ÷ 100) × 6% CP. ';
+    if (!totOk) msg += 'Total = sum of both contributions. ';
+    showFb(fb,'err',msg.trim());
+  }
+}
+
+function checkMix2CP() {
+  const wPct = parseFloat(document.getElementById('b_wcs2_pct').value);
+  const rPct = parseFloat(document.getElementById('b_rb2_pct').value);
+  if (!isNaN(wPct)) document.getElementById('b_wcs2_pct_show').textContent = wPct.toFixed(1) + '%';
+  if (!isNaN(rPct)) document.getElementById('b_rb2_pct_show').textContent = rPct.toFixed(1) + '%';
+
+  const wContrib = parseFloat(document.getElementById('b_wcs2_cp_contrib').value);
+  const rContrib = parseFloat(document.getElementById('b_rb2_cp_contrib').value);
+  const total    = parseFloat(document.getElementById('b_mix2_cp').value);
+  const fb = document.getElementById('b_mix2_cp_fb');
+
+  if (isNaN(wPct) || isNaN(rPct)) { showFb(fb,'err','✗ Enter % of WCS and % of rice bran in Mix 2 first.'); return; }
+  if (isNaN(wContrib)||isNaN(rContrib)||isNaN(total)) { showFb(fb,'err','✗ Fill in all three rows of the table.'); return; }
+
+  const expWC = wPct/100 * 22;
+  const expRC = rPct/100 * 14;
+  const expTotal = expWC + expRC;
+  const tol = 0.4;
+
+  const wcOk = Math.abs(wContrib - expWC) <= tol;
+  const rcOk = Math.abs(rContrib - expRC) <= tol;
+  const totOk = Math.abs(total - expTotal) <= tol;
+
+  function mf(id,ok){const el=document.getElementById(id);el.classList.remove('correct','wrong');el.classList.add(ok?'correct':'wrong');if(!ok){el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),400);}}
+  mf('b_wcs2_cp_contrib',wcOk); mf('b_rb2_cp_contrib',rcOk); mf('b_mix2_cp',totOk);
+
+  if (wcOk&&rcOk&&totOk) {
+    showFb(fb,'ok','✓ Correct! Mix 2 CP = '+expTotal.toFixed(1)+'% — above the 14% target, while Mix 1 was below it. Now we can balance them in Square 3.');
+    markDone('b_mix2_cp_ok','bull',5);
+  } else {
+    let msg = '✗ ';
+    if (!wcOk) msg += 'WCS contribution: ('+wPct.toFixed(1)+'% ÷ 100) × 22% CP. ';
+    if (!rcOk) msg += 'Rice bran contribution: ('+rPct.toFixed(1)+'% ÷ 100) × 14% CP. ';
+    if (!totOk) msg += 'Total = sum of both contributions. ';
+    showFb(fb,'err',msg.trim());
+  }
+}
+
+function checkSquareGeneric(dId, eId, fId, fbId, dAns, eAns, fAns, tol, doneKey, tab, step) {
+  const D = parseFloat(document.getElementById(dId).value);
+  const E = parseFloat(document.getElementById(eId).value);
+  const F = parseFloat(document.getElementById(fId).value);
+  const fb = document.getElementById(fbId);
+  const dOk = !isNaN(D) && Math.abs(D-dAns)<=tol;
+  const eOk = !isNaN(E) && Math.abs(E-eAns)<=tol;
+  const fOk = !isNaN(F) && Math.abs(F-fAns)<=tol;
+  function mark(id, ok) {
+    const el = document.getElementById(id);
+    el.classList.remove('correct','wrong');
+    el.classList.add(ok?'correct':'wrong');
+    if (ok) el.disabled=true;
+    else { el.classList.add('shake'); setTimeout(()=>el.classList.remove('shake'),400); }
+  }
+  mark(dId,dOk); mark(eId,eOk); mark(fId,fOk);
+  if (dOk&&eOk&&fOk) {
+    showFb(fb,'ok','✓ All correct! D='+dAns+', E='+eAns+', F='+fAns+'.');
+    markDone(doneKey, tab, step);
+  } else {
+    let msg='✗ ';
+    if(!dOk) msg+='Box D=|A−C|='+dAns+'. ';
+    if(!eOk) msg+='Box E=|B−A|='+eAns+'. ';
+    if(!fOk) msg+='Box F=D+E='+fAns+'. ';
+    showFb(fb,'err',msg.trim());
+  }
+}
+
+// worked example is now reveal-only
+function checkMareSquare() {
+  // Check Box A first
+  const A = parseFloat(document.getElementById('m_A').value);
+  const fb = document.getElementById('m_sq_fb');
+  if (isNaN(A)) { showFb(fb,'err','✗ Fill in Box A (your required CP%) before checking.'); return; }
+  if (Math.abs(A - 6.5) > 0.3) {
+    document.getElementById('m_A').classList.add('wrong');
+    document.getElementById('m_A').classList.add('shake');
+    setTimeout(()=>document.getElementById('m_A').classList.remove('shake'),400);
+    showFb(fb,'err','✗ Box A is not correct — go back to Step 4 and use your calculated CP requirement.');
+    return;
+  }
+  document.getElementById('m_A').classList.remove('wrong'); document.getElementById('m_A').classList.add('correct');
+  // Now check D, E, F — but don\'t reveal answers on wrong
+  const D = parseFloat(document.getElementById('m_D').value);
+  const E = parseFloat(document.getElementById('m_E').value);
+  const F = parseFloat(document.getElementById('m_F').value);
+  const dOk = !isNaN(D) && Math.abs(D-3.7)<=0.3;
+  const eOk = !isNaN(E) && Math.abs(E-6.5)<=0.3;
+  const fOk = !isNaN(F) && Math.abs(F-10.2)<=0.4;
+  function mark(id,ok){const el=document.getElementById(id);el.classList.remove('correct','wrong');el.classList.add(ok?'correct':'wrong');if(ok)el.disabled=true;else{el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),400);}}
+  mark('m_D',dOk); mark('m_E',eOk); mark('m_F',fOk);
+  if (dOk&&eOk&&fOk) {
+    showFb(fb,'ok','✓ Correct! All boxes are right.');
+    markDone('m_sq','mare',5);
+  } else {
+    let msg='✗ One or more values are incorrect. Check your diagonal subtractions and remember to make negatives positive.';
+    showFb(fb,'err',msg);
+  }
+}
+function checkBullSquare1() {
+  const fb = document.getElementById('b1_sq_fb');
+  const Bv = parseFloat(document.getElementById('b1_B_val').value);
+  const Cv = parseFloat(document.getElementById('b1_C_val').value);
+  const Av = parseFloat(document.getElementById('b1_A_val').value);
+  if (isNaN(Bv)||isNaN(Cv)||isNaN(Av)) { showFb(fb,'err','✗ Fill in Box A, B and C values before checking.'); return; }
+  const bOk = Math.abs(Bv-15)<=0.2, cOk = Math.abs(Cv-8)<=0.2, aOk = Math.abs(Av-11)<=0.2;
+  function mfv(id,ok){const el=document.getElementById(id);el.classList.remove('correct','wrong');el.classList.add(ok?'correct':'wrong');if(ok)el.disabled=true;else{el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),400);}}
+  mfv('b1_B_val',bOk); mfv('b1_C_val',cOk); mfv('b1_A_val',aOk);
+  if (!bOk||!cOk||!aOk) { showFb(fb,'err','✗ Check your Box A, B or C values against the feed table.'); return; }
+  const D=parseFloat(document.getElementById('b1_D').value), E=parseFloat(document.getElementById('b1_E').value), F=parseFloat(document.getElementById('b1_F').value);
+  const dOk=!isNaN(D)&&Math.abs(D-3)<=0.3, eOk=!isNaN(E)&&Math.abs(E-4)<=0.3, fOk=!isNaN(F)&&Math.abs(F-7)<=0.4;
+  mfv('b1_D',dOk); mfv('b1_E',eOk); mfv('b1_F',fOk);
+  if (dOk&&eOk&&fOk) { showFb(fb,'ok','✓ Correct! Square 1 is complete.'); markDone('b1_sq','bull',2); }
+  else showFb(fb,'err','✗ One or more parts are incorrect. Check your diagonal subtractions and make negatives positive.');
+}
+function checkBullSquare2() {
+  const fb = document.getElementById('b2_sq_fb');
+  const Bv = parseFloat(document.getElementById('b2_B_val').value);
+  const Cv = parseFloat(document.getElementById('b2_C_val').value);
+  const Av = parseFloat(document.getElementById('b2_A_val').value);
+  if (isNaN(Bv)||isNaN(Cv)||isNaN(Av)) { showFb(fb,'err','✗ Fill in Box A, B and C values before checking.'); return; }
+  const bOk=Math.abs(Bv-15)<=0.2, cOk=Math.abs(Cv-9)<=0.2, aOk=Math.abs(Av-11)<=0.2;
+  function mfv(id,ok){const el=document.getElementById(id);el.classList.remove('correct','wrong');el.classList.add(ok?'correct':'wrong');if(ok)el.disabled=true;else{el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),400);}}
+  mfv('b2_B_val',bOk); mfv('b2_C_val',cOk); mfv('b2_A_val',aOk);
+  if (!bOk||!cOk||!aOk) { showFb(fb,'err','✗ Check your Box A, B or C values against the feed table.'); return; }
+  const D=parseFloat(document.getElementById('b2_D').value), E=parseFloat(document.getElementById('b2_E').value), F=parseFloat(document.getElementById('b2_F').value);
+  const dOk=!isNaN(D)&&Math.abs(D-2)<=0.3, eOk=!isNaN(E)&&Math.abs(E-4)<=0.3, fOk=!isNaN(F)&&Math.abs(F-6)<=0.4;
+  mfv('b2_D',dOk); mfv('b2_E',eOk); mfv('b2_F',fOk);
+  if (dOk&&eOk&&fOk) { showFb(fb,'ok','✓ Correct! Square 2 is complete.'); markDone('b2_sq','bull',4); }
+  else showFb(fb,'err','✗ One or more parts are incorrect. Check your diagonal subtractions and make negatives positive.');
+}
+function checkBullSquare3() {
+  const fb = document.getElementById('b3_sq_fb');
+  const Bv = parseFloat(document.getElementById('b3_B_val').value);
+  const Cv = parseFloat(document.getElementById('b3_C_val').value);
+  const Av = parseFloat(document.getElementById('b3_A_val').value);
+  if (isNaN(Bv)||isNaN(Cv)||isNaN(Av)) { showFb(fb,'err','✗ Fill in Box A, B and C values before checking.'); return; }
+  const bOk=Math.abs(Bv-16.5)<=0.5, cOk=Math.abs(Cv-12.8)<=0.5, aOk=Math.abs(Av-14)<=0.2;
+  function mfv(id,ok){const el=document.getElementById(id);el.classList.remove('correct','wrong');el.classList.add(ok?'correct':'wrong');if(ok)el.disabled=true;else{el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),400);}}
+  mfv('b3_B_val',bOk); mfv('b3_C_val',cOk); mfv('b3_A_val',aOk);
+  if (!bOk||!cOk||!aOk) {
+    let msg='✗ ';
+    if(!bOk) msg+='Box B should be the CP% of Mix 2 (from Step 5). ';
+    if(!cOk) msg+='Box C should be the CP% of Mix 1 (from Step 3). ';
+    if(!aOk) msg+='Box A should be the bull\'s required CP% (14%). ';
+    showFb(fb,'err',msg); return;
+  }
+  const D=parseFloat(document.getElementById('b3_D').value), E=parseFloat(document.getElementById('b3_E').value), F=parseFloat(document.getElementById('b3_F').value);
+  const dOk=!isNaN(D)&&Math.abs(D-1.2)<=0.35, eOk=!isNaN(E)&&Math.abs(E-2.5)<=0.35, fOk=!isNaN(F)&&Math.abs(F-3.7)<=0.45;
+  mfv('b3_D',dOk); mfv('b3_E',eOk); mfv('b3_F',fOk);
+  if (dOk&&eOk&&fOk) { showFb(fb,'ok','✓ Correct! Square 3 is complete.'); markDone('b3_sq','bull',6); }
+  else showFb(fb,'err','✗ One or more parts are incorrect. Check your diagonal subtractions and make negatives positive.');
+}
+
+// ═══════════════════════════════════════════
+// STEP UNLOCKING
+// ═══════════════════════════════════════════
+function unlockStep(prefix, cur, next, total, tab) {
+  const prevEl = document.getElementById(prefix+'step'+cur);
+  prevEl.classList.remove('active'); prevEl.classList.add('completed');
+  document.getElementById(prefix+'status'+cur).textContent = '✅';
+  tabProgress[tab]++;
+  updateProg(tab);
+  const nextEl = document.getElementById(prefix+'step'+next);
+  nextEl.classList.remove('locked'); nextEl.classList.add('active');
+  document.getElementById(prefix+'status'+next).textContent = '🔓';
+  setTimeout(()=>nextEl.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function unlockWStep(n) {
+  if (n===2) unlockStep('w',1,2,3,'worked');
+  else if (n===3) unlockStep('w',2,3,3,'worked');
+}
+function finishWorked() {
+  document.getElementById('wstep3').classList.remove('active');
+  document.getElementById('wstep3').classList.add('completed');
+  document.getElementById('wstatus3').textContent='✅';
+  tabProgress.worked++; updateProg('worked');
+  const b=document.getElementById('worked-complete');
+  b.classList.add('show');
+  setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function unlockMStep(n) {
+  unlockStep('m',n-1,n,8,'mare');
+}
+function finishMare() {
+  document.getElementById('mstep8').classList.remove('active');
+  document.getElementById('mstep8').classList.add('completed');
+  document.getElementById('mstatus8').textContent='✅';
+  tabProgress.mare++; updateProg('mare');
+  const b=document.getElementById('mare-complete');
+  b.classList.add('show');
+  setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function unlockBStep(n) {
+  unlockStep('b',n-1,n,9,'bull');
+}
+
+function updateBullSummary() {
+  // Only run if the summary elements exist (step 8 is active)
+  if (!document.getElementById('sum_hay_pct')) return;
+
+  // Read whatever the student has entered so far — blank = show dash
+  const hayRaw = document.getElementById('b_hay_final').value;
+  const rbRaw  = document.getElementById('b_rb_final').value;
+  const wcsRaw = document.getElementById('b_wcs_total').value;
+
+  const hay = parseFloat(hayRaw);
+  const rb  = parseFloat(rbRaw);
+  const wcs = parseFloat(wcsRaw);
+
+  const hayCp=6, rbCp=14, wcsCp=22;
+  const hayMe=8, rbMe=9,  wcsMe=15;
+  function f2(v){ return isNaN(v) ? '—' : v.toFixed(2); }
+  function f1(v){ return isNaN(v) ? '—' : v.toFixed(1)+'%'; }
+
+  // Ingredient rows
+  document.getElementById('sum_hay_pct').textContent = f1(hay);
+  document.getElementById('sum_rb_pct').textContent  = f1(rb);
+  document.getElementById('sum_wcs_pct').textContent = f1(wcs);
+
+  const hayCpC = isNaN(hay) ? NaN : hay/100 * hayCp;
+  const rbCpC  = isNaN(rb)  ? NaN : rb/100  * rbCp;
+  const wcsCpC = isNaN(wcs) ? NaN : wcs/100 * wcsCp;
+
+  document.getElementById('sum_hay_cp').textContent = f2(hayCpC)+(isNaN(hayCpC)?'':'%');
+  document.getElementById('sum_rb_cp').textContent  = f2(rbCpC)+(isNaN(rbCpC)?'':'%');
+  document.getElementById('sum_wcs_cp').textContent = f2(wcsCpC)+(isNaN(wcsCpC)?'':'%');
+
+  const hayMeC = isNaN(hay) ? NaN : hay/100 * hayMe;
+  const rbMeC  = isNaN(rb)  ? NaN : rb/100  * rbMe;
+  const wcsMeC = isNaN(wcs) ? NaN : wcs/100 * wcsMe;
+
+  document.getElementById('sum_hay_me').textContent = isNaN(hayMeC) ? '—' : hayMeC.toFixed(2)+' MJ/kg DM';
+  document.getElementById('sum_rb_me').textContent  = isNaN(rbMeC)  ? '—' : rbMeC.toFixed(2)+' MJ/kg DM';
+  document.getElementById('sum_wcs_me').textContent = isNaN(wcsMeC) ? '—' : wcsMeC.toFixed(2)+' MJ/kg DM';
+
+  // Totals — only show when all three are entered
+  const allEntered = !isNaN(hay) && !isNaN(rb) && !isNaN(wcs);
+  const total   = allEntered ? hay + rb + wcs : NaN;
+  const totalCp = allEntered ? hayCpC + rbCpC + wcsCpC : NaN;
+  const totalMe = allEntered ? hayMeC + rbMeC + wcsMeC : NaN;
+
+  const totalCell = document.getElementById('sum_total_pct');
+  totalCell.textContent = isNaN(total) ? '—' : total.toFixed(1)+'%';
+  totalCell.style.color = isNaN(total) ? '' : (Math.abs(total-100)<=2 ? 'var(--correct)' : 'var(--error)');
+  document.getElementById('sum_total_cp').textContent = isNaN(totalCp) ? '—' : totalCp.toFixed(2)+'% CP';
+  document.getElementById('sum_total_me').textContent = isNaN(totalMe) ? '—' : totalMe.toFixed(2)+' MJ/kg DM';
+
+  // Targets panel — only when all entered
+  const targEl = document.getElementById('sum_targets');
+  if (allEntered) {
+    const cpOk = Math.abs(totalCp - 14) <= 1.0;
+    const meOk = Math.abs(totalMe - 11) <= 0.5;
+    targEl.innerHTML =
+      '<strong>Nutrient targets check:</strong><br>' +
+      (cpOk ? '\u2713' : '\u2717') + ' CP = '+totalCp.toFixed(2)+'% &nbsp;(target: 14%) ' + (cpOk ? '\u2014 met \u2713' : '\u2014 check your calculations') + '<br>' +
+      (meOk ? '\u2713' : '\u2717') + ' ME = '+totalMe.toFixed(2)+' MJ/kg DM &nbsp;(target: 11 MJ/kg DM) ' + (meOk ? '\u2014 met \u2713' : '\u2014 check your calculations') + '<br>' +
+      '\u2211 Total inclusion = '+total.toFixed(1)+'% &nbsp;' + (Math.abs(total-100)<=2 ? '(sums to ~100% \u2713)' : '(should sum to ~100% \u2014 recheck your values)');
+    targEl.style.display = 'block';
+    targEl.style.background = (cpOk && meOk) ? 'var(--correct-light)' : 'var(--error-light)';
+    targEl.style.borderLeftColor = (cpOk && meOk) ? 'var(--correct)' : 'var(--error)';
+    targEl.style.color = (cpOk && meOk) ? 'var(--correct)' : 'var(--error)';
+  } else {
+    targEl.style.display = 'none';
+  }
+}
+
+function showBullSummaryAndUnlock() {
+  updateBullSummary();
+  unlockBStep(9);
+}
+
+function finishBull() {
+  document.getElementById('bstep9').classList.remove('active');
+  document.getElementById('bstep9').classList.add('completed');
+  document.getElementById('bstatus9').textContent='✅';
+  tabProgress.bull++; updateProg('bull');
+  const b=document.getElementById('bull-complete');
+  b.classList.add('show');
+  setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+// ═══════════════════════════════════════════
+// FREE ENTRY
+// ═══════════════════════════════════════════
+// ── checkNum variant that also populates a table cell ──
+function checkNumAndPopulate(inputId, correctVal, tol, fbId, explanation, tab, step, tableCellId) {
+  const inp = document.getElementById(inputId);
+  const fb  = document.getElementById(fbId);
+  const val = parseFloat(inp.value);
+  if (isNaN(val)) { showFb(fb,'err','Please enter a number.'); return; }
+  if (Math.abs(val - correctVal) <= tol) {
+    inp.classList.remove('wrong'); inp.classList.add('correct'); inp.disabled = true;
+    showFb(fb,'ok','\u2713 Correct! ' + explanation);
+    markDone(inputId, tab, step);
+    const cell = document.getElementById(tableCellId);
+    if (cell) { cell.textContent = val.toFixed(1) + '%'; cell.style.fontWeight='600'; cell.style.color='var(--correct)'; }
+  } else {
+    inp.classList.remove('correct'); inp.classList.add('wrong');
+    inp.classList.add('shake'); setTimeout(()=>inp.classList.remove('shake'),400);
+    showFb(fb,'err','\u2717 Not quite \u2014 check your calculation and try again.');
+  }
+}
+
+function checkFree() {
+  const A=parseFloat(document.getElementById('free_A').value);
+  const B=parseFloat(document.getElementById('free_B').value);
+  const C=parseFloat(document.getElementById('free_C').value);
+  const D=parseFloat(document.getElementById('free_D').value);
+  const E=parseFloat(document.getElementById('free_E').value);
+  const F=parseFloat(document.getElementById('free_F').value);
+  const fb=document.getElementById('free_fb');
+  if (isNaN(A)||isNaN(B)||isNaN(C)) { showFb(fb,'err','✗ Fill in Box A, B and C first.'); return; }
+
+  if (isNaN(D)||isNaN(E)||isNaN(F)) { showFb(fb,'err','✗ Fill in D, E and F before checking.'); return; }
+  const cD=Math.abs(A-C), cE=Math.abs(B-A), cF=cD+cE, tol=0.15;
+  const dOk=Math.abs(D-cD)<=tol, eOk=Math.abs(E-cE)<=tol, fOk=Math.abs(F-cF)<=tol;
+  function mf(id,ok){const el=document.getElementById(id);el.classList.remove('correct','wrong');el.classList.add(ok?'correct':'wrong');if(!ok){el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),400);}}
+  mf('free_D',dOk); mf('free_E',eOk); mf('free_F',fOk);
+  if (dOk&&eOk&&fOk) {
+    const lB=document.getElementById('free_label_B').value||'Ingredient B';
+    const lC=document.getElementById('free_label_C').value||'Ingredient C';
+    const pctB = (cD/cF*100).toFixed(1);
+    const pctC = (cE/cF*100).toFixed(1);
+    showFb(fb,'ok',
+      '\u2713 Correct!<br><br>' +
+      '<strong>Working:</strong><br>' +
+      'Parts of '+lB+' (Box D) = '+cD.toFixed(2)+'<br>' +
+      'Parts of '+lC+' (Box E) = '+cE.toFixed(2)+'<br>' +
+      'Total parts (Box F) = '+cF.toFixed(2)+'<br><br>' +
+      '<strong>Proportions:</strong><br>' +
+      lB+': '+cD.toFixed(2)+' ÷ '+cF.toFixed(2)+' × 100 = <strong>'+pctB+'%</strong><br>' +
+      lC+': '+cE.toFixed(2)+' ÷ '+cF.toFixed(2)+' × 100 = <strong>'+pctC+'%</strong>'
+    );
+  } else {
+    let msg='✗ ';
+    if(!dOk) msg+='D=|A−C|='+cD.toFixed(2)+'. ';
+    if(!eOk) msg+='E=|B−A|='+cE.toFixed(2)+'. ';
+    if(!fOk) msg+='F=D+E='+cF.toFixed(2)+'. ';
+    showFb(fb,'err',msg.trim());
+  }
+}
+
+function showFreeHint() {
+  const A=parseFloat(document.getElementById('free_A').value);
+  const B=parseFloat(document.getElementById('free_B').value);
+  const C=parseFloat(document.getElementById('free_C').value);
+  const h=document.getElementById('free_hint');
+  if (isNaN(A)||isNaN(B)||isNaN(C)) { h.style.display='block'; h.className='feedback hint show'; h.innerHTML='Fill in A, B and C first.'; return; }
+  const cD=Math.abs(A-C),cE=Math.abs(B-A),cF=cD+cE;
+  h.style.display = h.style.display==='none'?'block':'none';
+  h.className='feedback hint show';
+  h.innerHTML='D=|'+A+'−'+C+'|=<strong>'+cD.toFixed(2)+'</strong> | E=|'+B+'−'+A+'|=<strong>'+cE.toFixed(2)+'</strong> | F=<strong>'+cF.toFixed(2)+'</strong><br>High: '+(cD/cF*100).toFixed(1)+'% &nbsp; Low: '+(cE/cF*100).toFixed(1)+'%';
+}
+
+function resetFree() {
+  ['free_A','free_B','free_C','free_D','free_E','free_F','free_label_B','free_label_C'].forEach(id=>{
+    const el=document.getElementById(id); el.value=''; el.classList.remove('correct','wrong'); el.disabled=false;
+  });
+  const fb=document.getElementById('free_fb'); fb.className='feedback'; fb.innerHTML='';
+  const h=document.getElementById('free_hint'); h.style.display='none'; h.innerHTML='';
+}
+
+// ═══════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════
+function switchTab(id) {
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pane-'+id).classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+// ═══════════════════════════════════════════
+// TEACHING MODE
+// ═══════════════════════════════════════════
+function promptTeach() {
+  const ov=document.getElementById('teachOverlay');
+  ov.style.display='flex'; document.getElementById('teachPw').value='';
+  document.getElementById('teachErr').textContent='';
+  setTimeout(()=>document.getElementById('teachPw').focus(),50);
+}
+function closeTeach() { document.getElementById('teachOverlay').style.display='none'; }
+
+function doTeach() {
+  if (document.getElementById('teachPw').value.trim().toUpperCase()!=='COWS') {
+    document.getElementById('teachErr').textContent='Incorrect password.';
+    return;
+  }
+  closeTeach();
+  // Unlock all steps in current active tab
+  const active = document.querySelector('.tab-pane.active').id.replace('pane-','');
+  if (active==='worked') { for(let i=1;i<=3;i++) forceUnlock('w',i,'status'); for(let i=1;i<=3;i++){const b=document.getElementById('wnext'+i);if(b)b.disabled=false;}}
+  if (active==='mare')   { for(let i=1;i<=8;i++) forceUnlock('m',i,'status'); for(let i=1;i<=8;i++){const b=document.getElementById('mnext'+i);if(b)b.disabled=false;}}
+  if (active==='bull')   { for(let i=1;i<=9;i++) forceUnlock('b',i,'status'); for(let i=1;i<=9;i++){const b=document.getElementById('bnext'+i);if(b)b.disabled=false;}}
+  document.getElementById('teachBanner').style.display='flex';
+  document.getElementById('teachModeBtn').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function forceUnlock(prefix, n, _) {
+  const el=document.getElementById(prefix+'step'+n);
+  if (!el) return;
+  el.classList.remove('locked');
+  if (!el.classList.contains('completed')) el.classList.add('active');
+  const st=document.getElementById(prefix+'status'+n);
+  if (st&&st.textContent==='🔒') st.textContent='🔓';
+}
+
+function exitTeach() {
+  // Restore each tab to its original load state:
+  // step 1 = active/unlocked, steps 2+ = locked (unless genuinely completed)
+  ['w','m','b'].forEach(p=>{
+    const max=p==='w'?3:p==='m'?8:9;
+    for(let i=1;i<=max;i++){
+      const el=document.getElementById(p+'step'+i);
+      if(!el)continue;
+      const st=document.getElementById(p+'status'+i);
+      if(!st)continue;
+      // Skip genuinely completed steps (they have ✅)
+      if(st.textContent==='✅') continue;
+      if(i===1){
+        // Step 1 should always be active and unlocked
+        el.classList.remove('locked','completed');
+        el.classList.add('active');
+        st.textContent='🔓';
+        // Don't disable next button for step 1 if it was already enabled before teach mode
+      } else {
+        // Steps 2+ should be locked unless completed
+        el.classList.add('locked');
+        el.classList.remove('active','completed');
+        st.textContent='🔒';
+        const prefix = p==='w'?'w':p==='m'?'m':'b';
+        const nb=document.getElementById(prefix+'next'+i);
+        if(nb)nb.disabled=true;
+      }
+    }
+  });
+  document.getElementById('teachBanner').style.display='none';
+  document.getElementById('teachModeBtn').style.display='inline-block';
+}
+
+
+  // ── Wire up live summary table updates for bull step 8 ──
+  // Runs after DOM + all JS is ready — safe to reference checkNum and updateBullSummary
+  window.addEventListener('DOMContentLoaded', function() {
+    ['b_hay_final','b_rb_final','b_wcs_m1','b_wcs_m2','b_wcs_total'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('input', function() { updateBullSummary(); });
+    });
+  });
+
+  // Patch checkNum so it also refreshes the summary whenever a bull step 8 answer is checked
+  var _origCheckNum = checkNum;
+  checkNum = function(inputId, correctVal, tol, fbId, explanation, tab, step) {
+    _origCheckNum(inputId, correctVal, tol, fbId, explanation, tab, step);
+    if (tab === 'bull' && step === 8) { updateBullSummary(); }
+  };
+
+
+  // ── Print / PDF function ──
+  function printQuestion(which) {
+    const nameId  = which === 'mare' ? 'mare_student_name' : 'bull_student_name';
+    const errId   = which === 'mare' ? 'mare_name_err'     : 'bull_name_err';
+    const nameVal = document.getElementById(nameId).value.trim();
+    const errEl   = document.getElementById(errId);
+
+    if (!nameVal) {
+      errEl.textContent = 'Please enter your name before printing.';
+      document.getElementById(nameId).focus();
+      return;
+    }
+    errEl.textContent = '';
+
+    // Set the print header name + timestamp
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-AU', {day:'2-digit',month:'short',year:'numeric'});
+    const timeStr = now.toLocaleTimeString('en-AU', {hour:'2-digit',minute:'2-digit'});
+    document.getElementById('print_namedate').textContent =
+      nameVal + '  \u2022  ' + dateStr + ' ' + timeStr +
+      (which === 'mare' ? '  \u2022  Q1: Mare' : '  \u2022  Q2: Stud Bull');
+
+    // Hide all tab panes except the one being printed
+    document.querySelectorAll('.tab-pane').forEach(function(p) {
+      p.classList.add('print-hide');
+    });
+    const paneId = which === 'mare' ? 'pane-mare' : 'pane-bull';
+    document.getElementById(paneId).classList.remove('print-hide');
+
+    // Trigger browser print
+    window.print();
+
+    // Restore after print dialog closes
+    setTimeout(function() {
+      document.querySelectorAll('.tab-pane').forEach(function(p) {
+        p.classList.remove('print-hide');
+      });
+    }, 1000);
+  }
+
+</script>
+</body>
+</html>
