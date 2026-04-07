@@ -473,12 +473,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <svg width="150" height="128" viewBox="0 0 150 128" xmlns="http://www.w3.org/2000/svg" style="display:block;">
               <polygon points="75,6 143,118 7,118" fill="#fff7ee" stroke="#8b4513" stroke-width="2.5" stroke-linejoin="round"/>
               <line x1="40" y1="74" x2="110" y2="74" stroke="#8b4513" stroke-width="2"/>
-              <!-- Top: $/kg DM -->
-              <text x="75" y="60" text-anchor="middle" font-family="DM Mono, monospace" font-size="12" font-weight="700" fill="#8b4513">$/kg DM</text>
-              <!-- Bottom left: $/kg AF -->
-              <text x="43" y="100" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" font-weight="700" fill="#2d6a4f">$/kg AF</text>
+              <!-- Top: $/kg as-fed (the one you cover to get the formula) -->
+              <text x="75" y="58" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" font-weight="700" fill="#8b4513">$/kg AF</text>
+              <!-- Bottom left: $/kg DM -->
+              <text x="43" y="100" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" font-weight="700" fill="#2d6a4f">$/kg DM</text>
               <!-- multiply symbol -->
-              <text x="75" y="98" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" fill="#5a4e40">×</text>
+              <text x="75" y="98" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="13" fill="#5a4e40">×</text>
               <!-- Bottom right: DM% -->
               <text x="108" y="100" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" font-weight="700" fill="#2d6a4f">DM%</text>
               <!-- hint text -->
@@ -493,12 +493,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <p style="font-size:0.84rem;color:#3a3228;margin-bottom:8px;">Cover the value you want to find:</p>
             <div style="display:flex;flex-direction:column;gap:6px;">
               <div style="background:#fff7ee;border:1px solid #d4b896;border-radius:6px;padding:7px 12px;font-size:0.81rem;line-height:1.6;">
-                <div style="color:#7a6e5f;font-family:'DM Sans',sans-serif;margin-bottom:2px;">Want <strong style="color:#8b4513;">$/kg DM</strong>?</div>
+                <div style="color:#7a6e5f;font-family:'DM Sans',sans-serif;margin-bottom:2px;">Want <strong style="color:#2d6a4f;">$/kg DM</strong>?</div>
                 <div style="font-family:'DM Mono',monospace;font-size:0.8rem;"><strong>$/kg as-fed &divide; DM% (decimal)</strong></div>
                 <div style="font-size:0.75rem;color:#7a6e5f;margin-top:3px;font-style:italic;">e.g. $1.20 &divide; 0.90 = $1.33/kg DM</div>
               </div>
               <div style="background:#fff7ee;border:1px solid #d4b896;border-radius:6px;padding:7px 12px;font-size:0.81rem;line-height:1.6;">
-                <div style="color:#7a6e5f;font-family:'DM Sans',sans-serif;margin-bottom:2px;">Want <strong style="color:#2d6a4f;">$/kg as-fed</strong>?</div>
+                <div style="color:#7a6e5f;font-family:'DM Sans',sans-serif;margin-bottom:2px;">Want <strong style="color:#8b4513;">$/kg as-fed</strong>?</div>
                 <div style="font-family:'DM Mono',monospace;font-size:0.8rem;"><strong>$/kg DM &times; DM% (decimal)</strong></div>
                 <div style="font-size:0.75rem;color:#7a6e5f;margin-top:3px;font-style:italic;">e.g. $1.33 &times; 0.90 = $1.20/kg as-fed</div>
               </div>
@@ -739,6 +739,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <div class="scenario">
     <strong>Question 2:</strong> A farmer is preparing a <strong>500 kg stud bull</strong> for sale. He feeds oaten hay (grown on-farm), rice bran and whole cotton seed (WCS).
     To grow at ~1.1 kg/day, the bull requires <strong>11 MJ ME/kg DM</strong> and <strong>14% CP</strong>.
+    We can assume a DM feed intake of <strong>2.5% of liveweight</strong>.
     <br><br>
     <table class="feed-table">
       <thead><tr><th>Feed</th><th>% DM</th><th>ME (MJ/kg DM)</th><th>CP (% DM)</th><th>Purchase price</th></tr></thead>
@@ -997,10 +998,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="step-header"><div class="step-num">7</div><div class="step-title">Calculate final % of each mix in the ration</div><div class="step-status" id="bstatus7">🔒</div></div>
     <div class="step-body">
       <div class="q-row"><div class="q-label"><strong>% Mix 1</strong> in final ration<br>(parts of Mix 1 ÷ total parts × 100)</div>
-        <div class="input-row"><input class="ans-input" id="b_mix1_pct" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkNum('b_mix1_pct',67.6,1.5,'b_mix1_pct_fb','= 2.5÷3.7×100 = 67.6% Mix 1','bull',7)">Check</button></div>
+        <div class="input-row"><input class="ans-input" id="b_mix1_pct" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkBullDynamic('b_mix1_pct','mix1_pct','b_mix1_pct_fb','bull',7)">Check</button></div>
         <div class="feedback" id="b_mix1_pct_fb"></div></div>
       <div class="q-row"><div class="q-label"><strong>% Mix 2</strong> in final ration<br>(parts of Mix 2 ÷ total parts × 100)</div>
-        <div class="input-row"><input class="ans-input" id="b_mix2_pct" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkNum('b_mix2_pct',32.4,1.5,'b_mix2_pct_fb','= 1.2÷3.7×100 = 32.4% Mix 2','bull',7)">Check</button></div>
+        <div class="input-row"><input class="ans-input" id="b_mix2_pct" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkBullDynamic('b_mix2_pct','mix2_pct','b_mix2_pct_fb','bull',7)">Check</button></div>
         <div class="feedback" id="b_mix2_pct_fb"></div></div>
       <button class="next-btn" id="bnext7" onclick="unlockBStep(8)" disabled>Next step →</button>
     </div>
@@ -1011,19 +1012,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="step-body">
       <div class="info-box">% ingredient in final ration = (% in its mix) × (% of that mix in final ration).<br>WCS appears in both mixes — add the two contributions together.</div>
       <div class="q-row"><div class="q-label"><strong>Oaten Hay</strong> — only appears in Mix 1.<br>% in final ration = (% hay in Mix 1) × (% Mix 1 in final ration)</div>
-        <div class="input-row"><input class="ans-input" id="b_hay_final" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% final ration</span><button class="check-btn" onclick="checkNum('b_hay_final',38.6,1.5,'b_hay_final_fb','= 0.571×0.676×100 = 38.6%','bull',8)">Check</button></div>
+        <div class="input-row"><input class="ans-input" id="b_hay_final" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% final ration</span><button class="check-btn" onclick="checkBullDynamic('b_hay_final','hay_final','b_hay_final_fb','bull',8)">Check</button></div>
         <div class="feedback" id="b_hay_final_fb"></div></div>
       <div class="q-row"><div class="q-label"><strong>Rice Bran</strong> — only appears in Mix 2.<br>% in final ration = (% rice bran in Mix 2) × (% Mix 2 in final ration)</div>
-        <div class="input-row"><input class="ans-input" id="b_rb_final" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% final ration</span><button class="check-btn" onclick="checkNum('b_rb_final',21.6,1.5,'b_rb_final_fb','= 0.667×0.324×100 = 21.6%','bull',8)">Check</button></div>
+        <div class="input-row"><input class="ans-input" id="b_rb_final" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% final ration</span><button class="check-btn" onclick="checkBullDynamic('b_rb_final','rb_final','b_rb_final_fb','bull',8)">Check</button></div>
         <div class="feedback" id="b_rb_final_fb"></div></div>
       <div class="q-row"><div class="q-label"><strong>WCS contribution from Mix 1</strong><br>= (% WCS in Mix 1) × (% Mix 1 in final ration)</div>
-        <div class="input-row"><input class="ans-input" id="b_wcs_m1" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkNum('b_wcs_m1',29.0,1.5,'b_wcs_m1_fb','= 0.429×0.676×100 = 29.0%','bull',8)">Check</button></div>
+        <div class="input-row"><input class="ans-input" id="b_wcs_m1" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkBullDynamic('b_wcs_m1','wcs_m1','b_wcs_m1_fb','bull',8)">Check</button></div>
         <div class="feedback" id="b_wcs_m1_fb"></div></div>
       <div class="q-row"><div class="q-label"><strong>WCS contribution from Mix 2</strong><br>= (% WCS in Mix 2) × (% Mix 2 in final ration)</div>
-        <div class="input-row"><input class="ans-input" id="b_wcs_m2" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkNum('b_wcs_m2',10.8,1.5,'b_wcs_m2_fb','= 0.333×0.324×100 = 10.8%','bull',8)">Check</button></div>
+        <div class="input-row"><input class="ans-input" id="b_wcs_m2" type="number" step="0.1" placeholder="0.0"><span class="unit-label">%</span><button class="check-btn" onclick="checkBullDynamic('b_wcs_m2','wcs_m2','b_wcs_m2_fb','bull',8)">Check</button></div>
         <div class="feedback" id="b_wcs_m2_fb"></div></div>
       <div class="q-row"><div class="q-label"><strong>Total WCS in final ration</strong><br>= WCS from Mix 1 + WCS from Mix 2</div>
-        <div class="input-row"><input class="ans-input" id="b_wcs_total" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% final ration</span><button class="check-btn" onclick="checkNum('b_wcs_total',39.8,2.0,'b_wcs_total_fb','= 29.0+10.8 = 39.8% WCS (≈ 39.76% in answer key)','bull',8)">Check</button></div>
+        <div class="input-row"><input class="ans-input" id="b_wcs_total" type="number" step="0.1" placeholder="0.0"><span class="unit-label">% final ration</span><button class="check-btn" onclick="checkBullDynamic('b_wcs_total','wcs_total','b_wcs_total_fb','bull',8)">Check</button></div>
         <div class="feedback" id="b_wcs_total_fb"></div></div>
       <!-- Diet summary table -->
       <div id="b_diet_summary" style="display:block;margin-top:20px;">
@@ -1151,15 +1152,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
       <div class="q-row"><div class="q-label"><strong>Oaten hay</strong> — kg as-fed per day<br>
         (% inclusion × daily DM intake) ÷ % DM of hay</div>
-        <div class="input-row"><input class="ans-input" id="b_hay_af" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg as-fed/day</span><button class="check-btn" onclick="checkNum('b_hay_af',5.68,0.3,'b_hay_af_fb','= (38.6% × 12.5 kg DM) ÷ 0.85 = 5.68 kg/day','bull',9)">Check</button></div>
+        <div class="input-row"><input class="ans-input" id="b_hay_af" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg as-fed/day</span><button class="check-btn" onclick="checkBullDynamic('b_hay_af','hay_af','b_hay_af_fb','bull',9)">Check</button></div>
         <div class="feedback" id="b_hay_af_fb"></div></div>
 
       <div class="q-row"><div class="q-label"><strong>Rice bran</strong> — kg as-fed per day</div>
-        <div class="input-row"><input class="ans-input" id="b_rb_af" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg as-fed/day</span><button class="check-btn" onclick="checkNum('b_rb_af',3.0,0.3,'b_rb_af_fb','= (21.6% × 12.5 kg DM) ÷ 0.90 = 3.0 kg/day','bull',9)">Check</button></div>
+        <div class="input-row"><input class="ans-input" id="b_rb_af" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg as-fed/day</span><button class="check-btn" onclick="checkBullDynamic('b_rb_af','rb_af','b_rb_af_fb','bull',9)">Check</button></div>
         <div class="feedback" id="b_rb_af_fb"></div></div>
 
       <div class="q-row"><div class="q-label"><strong>Whole cotton seed</strong> — kg as-fed per day</div>
-        <div class="input-row"><input class="ans-input" id="b_wcs_af" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg as-fed/day</span><button class="check-btn" onclick="checkNum('b_wcs_af',5.41,0.3,'b_wcs_af_fb','= (39.8% × 12.5 kg DM) ÷ 0.92 = 5.41 kg/day','bull',9)">Check</button></div>
+        <div class="input-row"><input class="ans-input" id="b_wcs_af" type="number" step="0.01" placeholder="0.00"><span class="unit-label">kg as-fed/day</span><button class="check-btn" onclick="checkBullDynamic('b_wcs_af','wcs_af','b_wcs_af_fb','bull',9)">Check</button></div>
         <div class="feedback" id="b_wcs_af_fb"></div></div>
 
       <hr class="section-divider">
@@ -1894,6 +1895,78 @@ function exitTeach() {
   document.getElementById('teachModeBtn').style.display='inline-block';
 }
 
+
+
+  // ── Dynamic bull checker — derives correct answer from student's upstream inputs ──
+  function checkBullDynamic(inputId, answerKey, fbId, tab, step) {
+    const inp = document.getElementById(inputId);
+    const fb  = document.getElementById(fbId);
+    const val = parseFloat(inp.value);
+    if (isNaN(val)) { showFb(fb,'err','Please enter a number.'); return; }
+
+    // Read upstream student answers (fall back to correct values if not yet entered)
+    function getVal(id, fallback) {
+      var v = parseFloat(document.getElementById(id) ? document.getElementById(id).value : 'NaN');
+      return isNaN(v) ? fallback : v;
+    }
+
+    // Square 3 parts (step 6)
+    var b3D = getVal('b3_D', 1.2);  // Mix 2 parts
+    var b3E = getVal('b3_E', 2.5);  // Mix 1 parts
+    var b3F = getVal('b3_F', 3.7);  // total parts
+
+    // Mix % in final ration (step 7)
+    var mix1Pct = (b3F > 0) ? (b3E / b3F * 100) : 67.6;
+    var mix2Pct = (b3F > 0) ? (b3D / b3F * 100) : 32.4;
+
+    // Step 3 mix 1 compositions
+    var wcs1Pct = getVal('b_wcs1_pct', 42.9);
+    var hay1Pct = getVal('b_hay1_pct', 57.1);
+
+    // Step 5 mix 2 compositions
+    var wcs2Pct = getVal('b_wcs2_pct', 33.3);
+    var rb2Pct  = getVal('b_rb2_pct',  66.7);
+
+    // Step 8 final %s
+    var hayFinal  = (hay1Pct  * mix1Pct) / 100;
+    var rbFinal   = (rb2Pct   * mix2Pct) / 100;
+    var wcsM1     = (wcs1Pct  * mix1Pct) / 100;
+    var wcsM2     = (wcs2Pct  * mix2Pct) / 100;
+    var wcsTotal  = wcsM1 + wcsM2;
+
+    // Step 9 DM intake and as-fed
+    var dmi = getVal('b_dmi', 12.5);
+    var hayAf  = (hayFinal  / 100 * dmi) / 0.85;
+    var rbAf   = (rbFinal   / 100 * dmi) / 0.90;
+    var wcsAf  = (wcsTotal  / 100 * dmi) / 0.92;
+
+    var answers = {
+      mix1_pct:  { val: mix1Pct,  tol: 1.5, expl: 'Mix 1 parts ÷ total parts × 100' },
+      mix2_pct:  { val: mix2Pct,  tol: 1.5, expl: 'Mix 2 parts ÷ total parts × 100' },
+      hay_final: { val: hayFinal, tol: 1.5, expl: '% hay in Mix 1 × % Mix 1 in ration ÷ 100' },
+      rb_final:  { val: rbFinal,  tol: 1.5, expl: '% rice bran in Mix 2 × % Mix 2 in ration ÷ 100' },
+      wcs_m1:    { val: wcsM1,    tol: 1.5, expl: '% WCS in Mix 1 × % Mix 1 in ration ÷ 100' },
+      wcs_m2:    { val: wcsM2,    tol: 1.5, expl: '% WCS in Mix 2 × % Mix 2 in ration ÷ 100' },
+      wcs_total: { val: wcsTotal, tol: 2.0, expl: 'WCS from Mix 1 + WCS from Mix 2' },
+      hay_af:    { val: hayAf,    tol: 0.35, expl: '(hay% × DM intake) ÷ 0.85 (hay DM%)' },
+      rb_af:     { val: rbAf,     tol: 0.35, expl: '(rice bran% × DM intake) ÷ 0.90 (rice bran DM%)' },
+      wcs_af:    { val: wcsAf,    tol: 0.35, expl: '(WCS% × DM intake) ÷ 0.92 (WCS DM%)' },
+    };
+
+    var a = answers[answerKey];
+    if (!a) { showFb(fb,'err','Unknown answer key: '+answerKey); return; }
+
+    if (Math.abs(val - a.val) <= a.tol) {
+      inp.classList.remove('wrong'); inp.classList.add('correct'); inp.disabled = true;
+      showFb(fb,'ok','\u2713 Correct! (' + a.expl + ' = ' + a.val.toFixed(2) + ')');
+      markDone(inputId, tab, step);
+      if (tab === 'bull' && step === 8) { updateBullSummary(); }
+    } else {
+      inp.classList.remove('correct'); inp.classList.add('wrong');
+      inp.classList.add('shake'); setTimeout(function(){ inp.classList.remove('shake'); }, 400);
+      showFb(fb,'err','\u2717 Not quite \u2014 check your calculation. Expected ~' + a.val.toFixed(1) + '.');
+    }
+  }
 
   // ── Wire up live summary table updates for bull step 8 ──
   // Runs after DOM + all JS is ready — safe to reference checkNum and updateBullSummary
