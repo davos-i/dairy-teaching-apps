@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bovine IGF-1 ELISA – Standard Curve Exercise</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 15px; color: #222; background: #f5f6f8; line-height: 1.6; }
+
+  .page-header { background: #1a2e4a; color: white; padding: 18px 28px 14px; }
+  .page-header h1 { font-size: 20px; font-weight: 600; margin-bottom: 2px; }
+  .page-header p { font-size: 13px; color: #a8bdd0; }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .card { background: white; border-radius: 10px; border: 1px solid #dde1e8; margin-bottom: 20px; overflow: hidden; }
+  .card-header { background: #f0f3f8; padding: 12px 20px; border-bottom: 1px solid #dde1e8; display: flex; align-items: center; gap: 10px; }
+  .card-header .step-badge { background: #1a2e4a; color: white; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .card-header h2 { font-size: 15px; font-weight: 600; color: #1a2e4a; }
+  .card-body { padding: 18px 20px; }
+
+  .intro-box { background: #eef3fb; border-left: 4px solid #2563a8; border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 18px; font-size: 14px; color: #1a2e4a; line-height: 1.65; }
+  .intro-box strong { display: block; margin-bottom: 4px; font-size: 15px; }
+
+  .instruction-steps { margin: 12px 0; }
+  .instruction-steps li { font-size: 14px; color: #333; line-height: 1.8; padding: 4px 0; }
+  .instruction-steps li strong { color: #1a2e4a; }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 7px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.15s; }
+  .btn-primary { background: #1a2e4a; color: white; }
+  .btn-primary:hover { background: #243d60; }
+  .btn-check { background: #7c3aed; color: white; }
+  .btn-check:hover { background: #6d28d9; }
+
+  .seed-display { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 12px 16px; margin-top: 14px; display: none; }
+  .seed-display span { font-size: 13px; color: #78350f; }
+  .seed-display strong { font-size: 18px; color: #92400e; font-family: monospace; letter-spacing: 2px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { background: #1a2e4a; color: white; padding: 9px 12px; text-align: center; font-weight: 600; font-size: 13px; }
+  td { padding: 8px 12px; border-bottom: 1px solid #eee; text-align: center; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #f9fafb; }
+
+  .input-cell { width: 110px; padding: 6px 8px; border: 1.5px solid #c7d2de; border-radius: 6px; text-align: center; font-size: 14px; font-family: Arial; transition: border-color 0.15s; }
+  .input-cell:focus { outline: none; border-color: #2563a8; background: #f0f6ff; }
+  .input-cell.correct { border-color: #16a34a; background: #f0fdf4; }
+  .input-cell.incorrect { border-color: #dc2626; background: #fef2f2; }
+
+  .chart-container { position: relative; height: 340px; margin-top: 10px; }
+
+  .question-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid #eef0f4; }
+  .question-row:last-child { border-bottom: none; }
+  .q-num { background: #e0e7f0; color: #1a2e4a; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  .q-text { flex: 1; }
+  .q-text p { font-size: 14px; color: #333; margin-bottom: 8px; }
+  .q-input { width: 160px; padding: 7px 10px; border: 1.5px solid #c7d2de; border-radius: 6px; font-size: 14px; font-family: Arial; }
+  .q-input:focus { outline: none; border-color: #2563a8; background: #f0f6ff; }
+  .q-input.correct { border-color: #16a34a; background: #f0fdf4; }
+  .q-input.incorrect { border-color: #dc2626; background: #fef2f2; }
+
+  .result-panel { display: none; background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 16px 20px; margin-top: 16px; }
+  .result-panel.partial { background: #fffbeb; border-color: #fcd34d; }
+  .result-panel.poor { background: #fef2f2; border-color: #fca5a5; }
+  .result-title { font-weight: 700; font-size: 16px; margin-bottom: 6px; }
+  .result-detail { font-size: 13.5px; color: #444; line-height: 1.65; }
+
+  .progress-bar-wrap { background: #e5e7eb; border-radius: 99px; height: 8px; margin: 12px 0 4px; }
+  .progress-bar { background: #2563a8; border-radius: 99px; height: 8px; width: 0%; transition: width 0.4s; }
+
+  .instructor-box { background: #1a2e4a; color: #d0dce8; border-radius: 10px; padding: 20px; margin-top: 24px; display: none; }
+  .instructor-box h3 { color: #fff; font-size: 15px; margin-bottom: 14px; border-bottom: 1px solid #2e4a6b; padding-bottom: 8px; }
+  .instructor-box table th { background: #2563a8; }
+  .instructor-box table td { color: #d0dce8; border-color: #2e4a6b; }
+  .instructor-box table tr:nth-child(even) td { background: #1f3a5a; }
+  .key-value { display: flex; gap: 10px; margin: 5px 0; }
+  .key-value span:first-child { color: #8aaac5; font-size: 13px; min-width: 200px; }
+  .key-value span:last-child { color: #fff; font-size: 13px; font-weight: 600; font-family: monospace; }
+
+  .note { font-size: 13px; color: #666; font-style: italic; margin-top: 8px; }
+  .highlight { color: #1a2e4a; font-weight: 600; }
+  .tag { display: inline-block; background: #e0e7f0; color: #1a2e4a; border-radius: 5px; padding: 2px 8px; font-size: 12px; font-weight: 600; margin-left: 4px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>🔬 Bovine IGF-1 ELISA – Standard Curve Exercise</h1>
+  <p>BCHM240 &nbsp;|&nbsp; Biochemistry and Microbiology for Rural Science &nbsp;|&nbsp; University of New England</p>
+</div>
+
+<div class="container">
+
+  <!-- INTRODUCTION -->
+  <div class="card">
+    <div class="card-header">
+      <div class="step-badge">i</div>
+      <h2>Background</h2>
+    </div>
+    <div class="card-body">
+      <div class="intro-box">
+        <strong>What is a standard curve?</strong>
+        In an ELISA (Enzyme-Linked Immunosorbent Assay), we measure the concentration of a protein by comparing the absorbance of our unknown sample to a <em>standard curve</em> — a graph built from samples of <em>known</em> concentration. The curve lets us read off concentration directly from absorbance.
+      </div>
+      <p style="font-size:14px; color:#444; line-height:1.7;">
+        In this exercise you are running a sandwich ELISA for <strong>bovine IGF-1</strong> (Insulin-like Growth Factor 1), a hormone important in growth and milk production. Serum IGF-1 in dairy cows typically ranges from ~30 ng/mL in early postpartum cows up to ~150 ng/mL during mid-lactation, and higher in growing heifers. Your plate reader has measured absorbance at 450 nm for a series of IGF-1 standards spanning 0–300 ng/mL. You will:
+      </p>
+      <ol style="margin: 10px 0 0 18px; font-size:14px; color:#444; line-height:1.9;">
+        <li>Generate your personal dataset (unique to you)</li>
+        <li>Calculate mean absorbance for each standard</li>
+        <li>Build your standard curve in Excel</li>
+        <li>Use the curve to calculate the concentration of an unknown sample</li>
+        <li>Check your key numerical results</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- STEP 1: GENERATE DATA -->
+  <div class="card">
+    <div class="card-header">
+      <div class="step-badge">1</div>
+      <h2>Generate your dataset</h2>
+    </div>
+    <div class="card-body">
+      <p style="font-size:14px; color:#444; margin-bottom:14px;">Click the button below to generate <strong>your personal ELISA dataset</strong>. Each student receives slightly different absorbance values. Record your <span class="highlight">Student Code</span> — your lecturer needs it to check your work.</p>
+      <button class="btn btn-primary" onclick="generateData()">⚡ Generate My Dataset</button>
+
+      <div class="seed-display" id="seedDisplay">
+        <span>Your Student Code: </span><strong id="seedCode"></strong>
+        <span style="margin-left:16px; font-size:12px; color:#92400e;">Write this down now</span>
+      </div>
+
+      <div id="dataTableWrap" style="display:none; margin-top:18px;">
+        <p style="font-size:14px; font-weight:600; color:#1a2e4a; margin-bottom:8px;">Your ELISA plate absorbance readings (A₄₅₀)</p>
+        <p class="note" style="margin-bottom:10px;">Each standard was run in duplicate (Rep 1 and Rep 2). The blank contains no IGF-1.</p>
+        <div style="overflow-x:auto;">
+          <table id="dataTable">
+            <thead>
+              <tr>
+                <th>Standard</th>
+                <th>IGF-1 Concentration (ng/mL)</th>
+                <th>Replicate 1 (A₄₅₀)</th>
+                <th>Replicate 2 (A₄₅₀)</th>
+              </tr>
+            </thead>
+            <tbody id="dataBody"></tbody>
+          </table>
+        </div>
+        <p class="note" style="margin-top:8px;">💡 Copy these values into Excel to complete the steps below.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: MEAN ABSORBANCE -->
+  <div class="card" id="calcCard" style="display:none;">
+    <div class="card-header">
+      <div class="step-badge">2</div>
+      <h2>Calculate mean absorbance</h2>
+    </div>
+    <div class="card-body">
+      <p style="font-size:14px; color:#444; margin-bottom:14px;">In Excel, calculate the <strong>mean absorbance</strong> for each standard (average of Rep 1 and Rep 2). Enter your means here to check your arithmetic before moving on.</p>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Standard</th>
+              <th>IGF-1 (ng/mL)</th>
+              <th>Rep 1</th>
+              <th>Rep 2</th>
+              <th>Your Mean A₄₅₀</th>
+              <th>Check</th>
+            </tr>
+          </thead>
+          <tbody id="checkBody"></tbody>
+        </table>
+      </div>
+      <button class="btn btn-check" style="margin-top:14px;" onclick="checkMeans()">✓ Check My Means</button>
+      <div id="meansResult" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; font-size:14px;"></div>
+    </div>
+  </div>
+
+  <!-- STEP 3: BUILD THE STANDARD CURVE -->
+  <div class="card" id="chartCard" style="display:none;">
+    <div class="card-header">
+      <div class="step-badge">3</div>
+      <h2>Calculate standard curve</h2>
+    </div>
+    <div class="card-body">
+      <p style="font-size:14px; font-weight:600; color:#1a2e4a; margin-bottom:10px;">In Excel, follow these steps:</p>
+      <ol class="instruction-steps" style="margin-left:18px;">
+        <li><strong>Subtract the blank:</strong> subtract the mean A₄₅₀ of the blank (0 ng/mL standard) from the mean A₄₅₀ of every other standard. The blank-corrected blank itself becomes 0.000.</li>
+        <li><strong>Plot your chart:</strong> create an XY Scatter chart with <strong>Absorbance (A₄₅₀) on the X-axis</strong> and <strong>IGF-1 Concentration (ng/mL) on the Y-axis</strong>. Do not include the blank point (it is now 0,0 and will sit on the origin).</li>
+        <li><strong>Add a linear trendline:</strong> right-click the data series → Add Trendline → Linear. Tick <em>Set intercept to 0</em> and <em>Display equation on chart</em>.</li>
+      </ol>
+      <p style="font-size:13px; color:#666; margin-top:14px; margin-bottom:10px; font-style:italic;">The preview below shows what your corrected curve should look like. Your Excel chart should closely match this.</p>
+      <div class="chart-container">
+        <canvas id="stdChart"></canvas>
+      </div>
+      <div id="equationDisplay" style="margin-top:12px; background:#f0f6ff; border:1px solid #b8d0f0; border-radius:8px; padding:10px 14px; font-size:14px;"></div>
+    </div>
+  </div>
+
+  <!-- STEP 4: UNKNOWN SAMPLE -->
+  <div class="card" id="unknownCard" style="display:none;">
+    <div class="card-header">
+      <div class="step-badge">4</div>
+      <h2>Calculate unknown sample concentration</h2>
+    </div>
+    <div class="card-body">
+      <div id="unknownDesc" style="font-size:14px; color:#333; margin-bottom:14px; line-height:1.7;"></div>
+      <p style="font-size:14px; color:#444; margin-bottom:4px;"><strong>Using your trendline equation from Excel:</strong> your equation is in the form <em>y = mx</em> (where y = concentration, x = absorbance). Substitute your sample's blank-corrected absorbance for x to get the concentration directly — no rearranging needed.</p>
+      <p style="font-size:13px; color:#888; margin-bottom:6px; font-style:italic;">Remember to blank-correct the unknown absorbance first (subtract your mean blank A₄₅₀ before plugging in).</p>
+      <p style="font-size:13px; color:#888; margin-bottom:16px; font-style:italic;">Also plot the unknown on your Excel chart: add a second data series with just the one point so you can visually confirm it falls on the line.</p>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <label style="font-size:14px; font-weight:600; color:#1a2e4a;">My calculated IGF-1 concentration:</label>
+        <input type="number" step="0.1" class="q-input" id="unknownInput" placeholder="e.g. 87.5" style="width:140px;" />
+        <span style="font-size:14px; color:#555;">ng/mL</span>
+        <button class="btn btn-check" onclick="checkUnknown()">✓ Check</button>
+      </div>
+      <div id="unknownResult" style="display:none; margin-top:10px; padding:10px 14px; border-radius:8px; font-size:14px;"></div>
+    </div>
+  </div>
+
+  <!-- STEP 5: NUMERICAL CHECKS -->
+  <div class="card" id="questionsCard" style="display:none;">
+    <div class="card-header">
+      <div class="step-badge">5</div>
+      <h2>Check your numbers</h2>
+    </div>
+    <div class="card-body">
+      <p style="font-size:14px; color:#444; margin-bottom:16px;">Enter the values from your Excel chart to confirm everything is correct before the class discussion.</p>
+      <div id="questionsBody"></div>
+      <button class="btn btn-check" style="margin-top:16px;" onclick="checkQuestions()">✓ Check My Answers</button>
+      <div class="result-panel" id="questionsResult">
+        <div class="result-title" id="resultTitle"></div>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="result-detail" id="resultDetail"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTRUCTOR PANEL -->
+  <div class="card" style="border-color:#1a2e4a;">
+    <div class="card-header" style="background:#e8eef5;">
+      <div class="step-badge" style="background:#7c3aed;">🔐</div>
+      <h2 style="color:#7c3aed;">Instructor Answer Key</h2>
+    </div>
+    <div class="card-body">
+      <p style="font-size:14px; color:#444; margin-bottom:12px;">Enter a student's <strong>Student Code</strong> and the instructor password to reveal their expected answers.</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <input type="text" id="checkSeedInput" placeholder="Student Code (e.g. A7F3)" style="padding:9px 14px; border:1.5px solid #c7d2de; border-radius:7px; font-size:14px; width:180px; font-family:monospace; text-transform:uppercase;" maxlength="4" />
+        <input type="password" id="instructorPass" placeholder="Password" style="padding:9px 14px; border:1.5px solid #c7d2de; border-radius:7px; font-size:14px; width:180px;" />
+        <button class="btn btn-primary" onclick="revealAnswers()">🔓 Reveal Answers</button>
+      </div>
+      <div class="instructor-box" id="instructorBox"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const INSTRUCTOR_PASSWORD = "cowsarecool";
+const STANDARDS = [0, 10, 25, 50, 100, 200, 300];
+const STD_LABELS = ["Blank", "Std 1", "Std 2", "Std 3", "Std 4", "Std 5", "Std 6"];
+
+let currentSeed = null;
+let trueSlope = 0;
+let unknownConc = 0, unknownAbs = 0, blankMean = 0;
+let generatedData = null;
+let stdChart = null;
+
+function seededRandom(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+}
+
+function computeData(seedNum) {
+  const rng = seededRandom(seedNum);
+  const slope = 0.0028 + rng() * 0.0008;
+  const intercept = 0.04 + rng() * 0.04;
+  const noise = 0.008 + rng() * 0.008;
+
+  const rows = [];
+  for (let i = 0; i < STANDARDS.length; i++) {
+    const conc = STANDARDS[i];
+    const trueAbs = intercept + slope * conc;
+    const r1 = Math.max(0, trueAbs + (rng() - 0.5) * 2 * noise);
+    const r2 = Math.max(0, trueAbs + (rng() - 0.5) * 2 * noise);
+    const mean = (r1 + r2) / 2;
+    rows.push({ std: STD_LABELS[i], conc, r1: +r1.toFixed(3), r2: +r2.toFixed(3), trueMean: +mean.toFixed(3) });
+  }
+
+  const blank = rows[0].trueMean;
+  const corrected = rows.map(r => +Math.max(0, r.trueMean - blank).toFixed(3));
+
+  // forced-through-origin slope: sum(x*y)/sum(x*x) where x=corrected abs, y=conc (skip blank)
+  const pts = rows.slice(1).map((r, i) => ({ x: corrected[i + 1], y: r.conc }));
+  const sumXY = pts.reduce((s, p) => s + p.x * p.y, 0);
+  const sumX2 = pts.reduce((s, p) => s + p.x * p.x, 0);
+  const originSlope = sumXY / sumX2;
+
+  // R² for origin-forced line
+  const yMean = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+  const ssTot = pts.reduce((s, p) => s + (p.y - yMean) ** 2, 0);
+  const ssRes = pts.reduce((s, p) => s + (p.y - originSlope * p.x) ** 2, 0);
+  const r2 = 1 - ssRes / ssTot;
+
+  const uConc = 40 + rng() * 180;
+  const unknownConcVal = +uConc.toFixed(1);
+  // unknown raw absorbance (before blank subtraction)
+  const unknownRawAbs = +(intercept + slope * unknownConcVal + (rng() - 0.5) * noise).toFixed(3);
+  const unknownCorrAbs = +Math.max(0, unknownRawAbs - blank).toFixed(3);
+
+  return { rows, blank, corrected, originSlope, r2, unknownConcVal, unknownRawAbs, unknownCorrAbs };
+}
+
+function generateData() {
+  const seedNum = Math.floor(Math.random() * 65536);
+  const seedCode = seedNum.toString(16).toUpperCase().padStart(4, '0');
+  currentSeed = seedCode;
+
+  const d = computeData(seedNum);
+  generatedData = d.rows;
+  blankMean = d.blank;
+  trueSlope = d.originSlope;
+  unknownConc = d.unknownConcVal;
+  unknownAbs = d.unknownRawAbs;
+
+  document.getElementById('seedDisplay').style.display = 'block';
+  document.getElementById('seedCode').textContent = seedCode;
+
+  const tbody = document.getElementById('dataBody');
+  tbody.innerHTML = '';
+  d.rows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><strong>${r.std}</strong></td><td>${r.conc === 0 ? '0 (Blank)' : r.conc}</td><td>${r.r1.toFixed(3)}</td><td>${r.r2.toFixed(3)}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('dataTableWrap').style.display = 'block';
+
+  buildCheckTable(d.rows);
+  buildChart(d);
+  buildUnknown(d);
+  buildQuestions(d);
+
+  document.getElementById('calcCard').style.display = 'block';
+  document.getElementById('chartCard').style.display = 'block';
+  document.getElementById('unknownCard').style.display = 'block';
+  document.getElementById('questionsCard').style.display = 'block';
+}
+
+function buildCheckTable(rows) {
+  const tbody = document.getElementById('checkBody');
+  tbody.innerHTML = '';
+  rows.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${r.std}</strong></td>
+      <td>${r.conc === 0 ? '0' : r.conc}</td>
+      <td>${r.r1.toFixed(3)}</td>
+      <td>${r.r2.toFixed(3)}</td>
+      <td><input type="number" step="0.001" class="input-cell" id="mean_${i}" placeholder="0.000" /></td>
+      <td id="check_${i}">—</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function checkMeans() {
+  let allCorrect = true;
+  generatedData.forEach((r, i) => {
+    const inp = document.getElementById(`mean_${i}`);
+    const check = document.getElementById(`check_${i}`);
+    const val = parseFloat(inp.value);
+    if (isNaN(val)) { check.textContent = '⚠️'; inp.className = 'input-cell'; allCorrect = false; return; }
+    if (Math.abs(val - r.trueMean) <= 0.002) {
+      check.textContent = '✅'; inp.classList.add('correct'); inp.classList.remove('incorrect');
+    } else {
+      check.textContent = '❌'; inp.classList.add('incorrect'); inp.classList.remove('correct'); allCorrect = false;
+    }
+  });
+  const res = document.getElementById('meansResult');
+  res.style.display = 'block';
+  if (allCorrect) {
+    res.style.background = '#f0fdf4'; res.style.border = '1px solid #86efac'; res.style.color = '#166534';
+    res.textContent = '✅ All means correct — proceed to step 3.';
+  } else {
+    res.style.background = '#fef2f2'; res.style.border = '1px solid #fca5a5'; res.style.color = '#991b1b';
+    res.textContent = '❌ Some means need correcting. Check your AVERAGE formula in Excel.';
+  }
+}
+
+function buildChart(d) {
+  // Plot blank-corrected: x = corrected absorbance, y = concentration (skip the 0,0 blank)
+  const pts = d.rows.slice(1).map((r, i) => ({ x: d.corrected[i + 1], y: r.conc }));
+  const unknownPt = { x: d.unknownCorrAbs, y: d.unknownConcVal };
+
+  const maxX = Math.max(...pts.map(p => p.x), unknownPt.x) * 1.08;
+  const lineData = [{ x: 0, y: 0 }, { x: maxX, y: d.originSlope * maxX }];
+
+  if (stdChart) stdChart.destroy();
+  const ctx = document.getElementById('stdChart').getContext('2d');
+  stdChart = new Chart(ctx, {
+    data: {
+      datasets: [
+        {
+          type: 'scatter',
+          label: 'Standards (blank-corrected)',
+          data: pts,
+          backgroundColor: '#2563a8',
+          pointRadius: 7,
+          pointHoverRadius: 9
+        },
+        {
+          type: 'line',
+          label: 'Trendline (through origin)',
+          data: lineData,
+          borderColor: '#dc2626',
+          borderWidth: 2,
+          pointRadius: 0,
+          fill: false
+        },
+        {
+          type: 'scatter',
+          label: 'Unknown sample',
+          data: [unknownPt],
+          backgroundColor: '#d97706',
+          pointRadius: 9,
+          pointStyle: 'triangle',
+          pointHoverRadius: 11
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { font: { size: 13 } } },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              if (ctx.dataset.label === 'Unknown sample') return `Unknown: (A₄₅₀ corr = ${ctx.parsed.x.toFixed(3)}, ${ctx.parsed.y.toFixed(1)} ng/mL)`;
+              return `${ctx.dataset.label}: (${ctx.parsed.x.toFixed(3)}, ${ctx.parsed.y} ng/mL)`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Blank-corrected Absorbance (A₄₅₀)', font: { size: 13 } },
+          min: 0
+        },
+        y: {
+          title: { display: true, text: 'IGF-1 Concentration (ng/mL)', font: { size: 13 } },
+          min: 0
+        }
+      }
+    }
+  });
+
+  const eqEl = document.getElementById('equationDisplay');
+  eqEl.innerHTML = `<strong>Trendline equation:</strong> &nbsp; y = ${d.originSlope.toFixed(2)}x &nbsp;&nbsp; | &nbsp;&nbsp; <strong>R² = ${d.r2.toFixed(4)}</strong> &nbsp;&nbsp; <span style="color:#666; font-size:13px;">(your Excel values should closely match these)</span>`;
+}
+
+function buildUnknown(d) {
+  const el = document.getElementById('unknownDesc');
+  el.innerHTML = `Your unknown sample <span class="tag">Sample U</span> gave a raw absorbance of <strong>A₄₅₀ = ${d.unknownRawAbs.toFixed(3)}</strong>. Subtract your mean blank absorbance (${d.blank.toFixed(3)}) to get the blank-corrected value, then substitute into your trendline equation to calculate IGF-1 concentration.`;
+  document.getElementById('unknownInput').value = '';
+  document.getElementById('unknownResult').style.display = 'none';
+}
+
+function checkUnknown() {
+  const val = parseFloat(document.getElementById('unknownInput').value);
+  const res = document.getElementById('unknownResult');
+  res.style.display = 'block';
+  if (isNaN(val)) {
+    res.style.background = '#fffbeb'; res.style.border = '1px solid #fcd34d'; res.style.color = '#78350f';
+    res.textContent = 'Please enter a number.'; return;
+  }
+  const err = Math.abs(val - unknownConc) / unknownConc;
+  if (err <= 0.03) {
+    res.style.background = '#f0fdf4'; res.style.border = '1px solid #86efac'; res.style.color = '#166534';
+    res.textContent = `✅ Correct! The unknown sample contains ${unknownConc.toFixed(1)} ng/mL IGF-1.`;
+    document.getElementById('unknownInput').classList.add('correct'); document.getElementById('unknownInput').classList.remove('incorrect');
+  } else {
+    res.style.background = '#fef2f2'; res.style.border = '1px solid #fca5a5'; res.style.color = '#991b1b';
+    res.innerHTML = `❌ Not quite. Make sure you blank-corrected the unknown absorbance before substituting into y = mx.`;
+    document.getElementById('unknownInput').classList.add('incorrect'); document.getElementById('unknownInput').classList.remove('correct');
+  }
+}
+
+function buildQuestions(d) {
+  const questions = [
+    {
+      id: 'q_blank',
+      text: 'What is the mean absorbance of the blank? (3 decimal places)',
+      answer: d.blank,
+      tolerance: 0.003,
+      step: '0.001',
+      placeholder: '0.000',
+      width: '120px',
+      feedback: `The blank (0 ng/mL) gives you the background signal. You subtract this from every other standard before plotting.`
+    },
+    {
+      id: 'q_slope',
+      text: 'What is the slope of your trendline (from Excel)? (round to 2 decimal places)',
+      answer: +d.originSlope.toFixed(2),
+      tolerance: d.originSlope * 0.02,
+      step: '0.01',
+      placeholder: '0.00',
+      width: '120px',
+      feedback: `The slope tells you how many ng/mL of IGF-1 corresponds to one unit of absorbance. Because the line is forced through the origin, the equation is simply y = mx — concentration = slope × absorbance.`
+    },
+    {
+      id: 'q_r2',
+      text: 'What is the R² value of your trendline? (4 decimal places)',
+      answer: +d.r2.toFixed(4),
+      tolerance: 0.005,
+      step: '0.0001',
+      placeholder: '0.0000',
+      width: '130px',
+      feedback: `R² tells you how well the line fits. For a valid ELISA standard curve R² should be ≥ 0.98.`
+    }
+  ];
+
+  const container = document.getElementById('questionsBody');
+  container.innerHTML = '';
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'question-row';
+    div.innerHTML = `
+      <div class="q-num">${i + 1}</div>
+      <div class="q-text">
+        <p>${q.text}</p>
+        <input type="number" step="${q.step}" class="q-input" id="${q.id}" placeholder="${q.placeholder}" style="width:${q.width};" />
+        <div id="fb_${q.id}" style="display:none; margin-top:6px; font-size:13px; color:#444; background:#f8f9fa; border-left:3px solid #c7d2de; padding:7px 10px; border-radius:0 6px 6px 0;"></div>
+      </div>`;
+    container.appendChild(div);
+  });
+  window._questions = questions;
+}
+
+function checkQuestions() {
+  const questions = window._questions;
+  let correct = 0;
+  questions.forEach(q => {
+    const inp = document.getElementById(q.id);
+    const fb = document.getElementById(`fb_${q.id}`);
+    fb.style.display = 'block';
+    fb.innerHTML = `<strong>Note:</strong> ${q.feedback}`;
+    const val = parseFloat(inp.value);
+    if (!isNaN(val) && Math.abs(val - q.answer) <= q.tolerance) {
+      correct++;
+      inp.classList.add('correct'); inp.classList.remove('incorrect');
+      fb.style.borderColor = '#86efac';
+    } else {
+      inp.classList.add('incorrect'); inp.classList.remove('correct');
+      fb.style.borderColor = '#fca5a5';
+      fb.innerHTML += `<br><span style="color:#991b1b;">Expected: <strong>${q.answer}</strong></span>`;
+    }
+  });
+
+  const panel = document.getElementById('questionsResult');
+  panel.style.display = 'block';
+  const pct = Math.round(correct / questions.length * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  const title = document.getElementById('resultTitle');
+  const detail = document.getElementById('resultDetail');
+
+  if (pct === 100) {
+    panel.className = 'result-panel';
+    title.textContent = `✅ ${correct}/${questions.length} correct — all good!`;
+    detail.textContent = 'Your standard curve is correct. You are ready for the class discussion.';
+  } else if (pct >= 66) {
+    panel.className = 'result-panel partial';
+    title.textContent = `⚠️ ${correct}/${questions.length} correct`;
+    detail.textContent = 'One or more values need checking. Review the feedback above and revisit your Excel chart.';
+  } else {
+    panel.className = 'result-panel poor';
+    title.textContent = `❌ ${correct}/${questions.length} correct`;
+    detail.textContent = 'Go back to Excel — check your blank subtraction, your axis orientation, and that the trendline is set through the origin.';
+  }
+}
+
+function revealAnswers() {
+  const code = document.getElementById('checkSeedInput').value.trim().toUpperCase();
+  const pass = document.getElementById('instructorPass').value.trim();
+
+  if (pass !== INSTRUCTOR_PASSWORD) { alert('Incorrect password.'); return; }
+  if (!/^[0-9A-F]{4}$/i.test(code)) { alert('Please enter a valid 4-character Student Code.'); return; }
+
+  const d = computeData(parseInt(code, 16));
+
+  const box = document.getElementById('instructorBox');
+  box.style.display = 'block';
+
+  let tableRows = d.rows.map((r, i) => `
+    <tr>
+      <td>${r.std}</td><td>${r.conc}</td>
+      <td>${r.r1.toFixed(3)}</td><td>${r.r2.toFixed(3)}</td>
+      <td><strong>${r.trueMean.toFixed(3)}</strong></td>
+      <td><strong>${d.corrected[i].toFixed(3)}</strong></td>
+    </tr>`).join('');
+
+  box.innerHTML = `
+    <h3>Answer Key — Student Code: ${code}</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:16px;">
+      <div>
+        <div class="key-value"><span>Mean blank A₄₅₀:</span><span>${d.blank.toFixed(3)}</span></div>
+        <div class="key-value"><span>Trendline equation:</span><span>y = ${d.originSlope.toFixed(2)}x</span></div>
+        <div class="key-value"><span>Slope:</span><span>${d.originSlope.toFixed(2)}</span></div>
+        <div class="key-value"><span>R²:</span><span>${d.r2.toFixed(4)}</span></div>
+        <div class="key-value"><span>R² acceptable (≥0.98)?</span><span>${d.r2 >= 0.98 ? 'YES' : 'NO'}</span></div>
+      </div>
+      <div>
+        <div class="key-value"><span>Unknown raw A₄₅₀:</span><span>${d.unknownRawAbs.toFixed(3)}</span></div>
+        <div class="key-value"><span>Unknown corrected A₄₅₀:</span><span>${d.unknownCorrAbs.toFixed(3)}</span></div>
+        <div class="key-value"><span>Unknown concentration:</span><span>${d.unknownConcVal.toFixed(1)} ng/mL</span></div>
+      </div>
+    </div>
+    <p style="font-size:13px; color:#8aaac5; margin-bottom:10px;">Standard means and blank-corrected values:</p>
+    <table style="font-size:13px;">
+      <thead><tr><th>Standard</th><th>Conc (ng/mL)</th><th>Rep 1</th><th>Rep 2</th><th>Mean A₄₅₀</th><th>Corrected A₄₅₀</th></tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>`;
+}
+</script>
+</body>
+</html>
